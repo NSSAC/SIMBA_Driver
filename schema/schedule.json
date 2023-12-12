@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://raw.githubusercontent.com/NSSAC/SIMBA_driver/schema/schedule.json",
+  "$vocabulary": {
+    "https://json-schema.org/draft/2019-09/meta/applicator": true,
+    "https://json-schema.org/draft/2019-09/meta/content": true,
+    "https://json-schema.org/draft/2019-09/meta/core": true,
+    "https://json-schema.org/draft/2019-09/meta/format": true,
+    "https://json-schema.org/draft/2019-09/meta/validation": true,
+    "https://json-schema.org/draft/2019-09/meta/meta-data": true
+  },
+  "title": "SIMBA Scheduler",
+  "description": "The schema describes which and how modules are executed during each tick of the driver.",
+  "type": "array",
+  "items": {
+    "title": "Module Schedule",
+    "description": "A specification of a module and its schedule.",
+    "type": "object",
+    "properties": {
+      "name": {
+        "title": "Module Name",
+        "description": "The name of the module.",
+        "type": "string"
+      },
+      "class": {
+        "title": "Module Python Class",
+        "description": "The python class name of the module.",
+        "type": "string"
+      },
+      "package": {
+        "title": "Module Python Package",
+        "description": "The python package name of the module.",
+        "type": "string"
+      },
+      "priority": {
+        "title": "Priority of Module Execution",
+        "description": "Higher priority is executed first. Priorities must be unique.",
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "enum": [
+              "-Infinity",
+              "Infinity"
+            ]
+          }
+        ]
+      },
+      "startTick": {
+        "title": "Module Start Tick",
+        "description": "The tick the module is executed the first time.",
+        "type": "integer",
+        "default": 0
+      },
+      "tickIncrement": {
+        "title": "Module Tick Increment",
+        "description": "The increment determining the next tick at which the module is executed. If the increment is 0 the module is only executed once.",
+        "type": "number",
+        "minimum": 0,
+        "default": 0
+      },
+      "endTick": {
+        "title": "Module End Tick",
+        "description": "The last Tick at which the Module may be executed.",
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "enum": [
+              "Infinity"
+            ]
+          }
+        ],
+        "default": "startTick if tickIncrement is 0, Infinity otherwise."
+      },
+      "moduleData": {
+        "title": "Module specific Data",
+        "description": "Module specific data provided to the module upon execution.",
+        "type": "object"
+      }
+    },
+    "required": [
+      "name",
+      "class",
+      "priority"
+    ]
+  }
+}
