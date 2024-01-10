@@ -2,3 +2,5 @@
 /.pydevproject
 /.settings
 *.pyc
+
+docs/_build/

@@ -1,7 +1,6 @@
 import sys
-from configuration import Configuration
-from database import Database
-from scheduler import Scheduler
+from simbadriver.configuration import Configuration
+from simbadriver.scheduler import Scheduler
 from numpy import inf
 import os, logging
 from datetime import datetime
@@ -9,7 +8,6 @@ from datetime import datetime
 class SIMBA:
     def __init__(self, configurationDirectory):
         self.Configuration = Configuration(configurationDirectory)
-        self.Database = Database(self)
                 
         self.schema = {
             "type" : "object",
