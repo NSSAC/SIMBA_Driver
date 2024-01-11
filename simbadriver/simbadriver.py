@@ -1,57 +1,27 @@
 import sys
+from pathlib import Path
 from simbadriver.configuration import Configuration
 from simbadriver.scheduler import Scheduler
+from simbadriver.rfc3339Duration import rfc3339Duration
 from numpy import inf
-import os, logging
+import os, logging, math
 from datetime import datetime
+from datetime import timedelta
 
 class SIMBA:
     def __init__(self, configurationDirectory):
         self.Configuration = Configuration(configurationDirectory)
+        self.InstallDir = Path(__file__).parent.parent.resolve()
                 
-        self.schema = {
-            "type" : "object",
-            "properties" : {
-                "runId" : {"type" : "string", "default" : "Uniquely generated Id"},
-                "cellId" : {"type" : "string", "default" : "0"},
-                "initialTick" : {"type" : "integer", "default" : 0},
-                "initialTime" : {"type" : "number", "default" : 0.0},
-                "endTime" : {"type" : "number"},
-                "continueFromTick" : {"type" : "integer", "default" : "initialTick"}, 
-                "scheduleIntervals" : {
-                    "description" : 
-                        "The intervals are executed in the listed order and must not overlap.",
-                    "type" : "array",
-                    "items" : {
-                        "type" : "object",
-                        "properties" : {
-                            "startTick" : {
-                                "type" : "integer", 
-                                "default" : "Previous endTick + 1 or 0"
-                                },
-                            "endTick" : {
-                                "anyOf" : [
-                                    {"type" : "integer"},
-                                    {"enum" : ["Infinity"]}
-                                    ],
-                                "default" : "Infinity"
-                                },
-                            "timePerTick" : {"type" : "number"}
-                            },
-                        "required" : [
-                            "timePerTick"
-                            ]
-                        }
-                    }
-                },
-            "required" : [
-                "endTime",
-                "scheduleIntervals"
-                ]
-            }
-        
-        self.data = self.Configuration.loadJsonFile("SIMBA.json", self.schema)
-        
+        self.schema = self.Configuration.loadJsonFile(self.InstallDir.joinpath("schema", "driver.json"))
+        self.data = self.Configuration.loadJsonFile("driver.json", self.schema)
+
+        self.data['initialTime'] = datetime.fromisoformat(self.data['initialTime'])        
+        self.data['endTime'] = datetime.fromisoformat(self.data['endTime'])        
+
+        if self.data["endTime"] < self.data['initialTime']:
+            sys.exit("ERROR: SIMBA invalid endTime: '" + str(self.data["endTime"]) + "'.")
+
         if not "runId" in self.data:
             #TODO CRITICAL Implement me
             self.data["runId"] = datetime.now().strftime("%Y%m%d%H%M%S.") + str(os.getpid())
@@ -62,17 +32,12 @@ class SIMBA:
         if not "initialTick" in self.data:
             self.data["initialTick"] = 0
             
-        if not "initialTime" in self.data:
-            self.data["initialTime"] = 0.0
-            
         if not "continueFromTick" in self.data:
             self.data["continueFromTick"] = self.data["initialTick"]
         
         if self.data["continueFromTick"] < self.data["initialTick"]:
             sys.exit("ERROR: SIMBA invalid continueFromTick: '" + str(self.data["continueFromTick"]) + "'.")
-            
-        if self.data["endTime"] <= 0.0:
-            sys.exit("ERROR: SIMBA invalid endTime: '" + str(self.data["endTime"]) + "'.")
+
         
         currentTime = self.data["initialTime"]
         currentTick = -1
@@ -97,16 +62,26 @@ class SIMBA:
             if item["endTick"] < item["startTick"]:
                 sys.exit("ERROR: SIMBA invalid schedule interval: ['" + str(item["startTick"]) + "', '" + str(item["endTick"]) + "'].")
             
-            if item["timePerTick"] <= 0.0:
-                sys.exit("ERROR: SIMBA invalid schedule interval timePerTick: '" + str(item["timePerTick"]) + "'.")
+            tickDuration = rfc3339Duration.toTimeDelta(item["tickDuration"])
+
+            if tickDuration <= timedelta(seconds=0):
+                sys.exit("ERROR: SIMBA invalid schedule interval tickDuration: '" + item["tickDuration"] + "'.")
+
+            item["tickDuration"] = tickDuration
 
             if currentTick < 0:
-                maxTime = currentTime + (item["endTick"] - item["startTick"]) * item["timePerTick"]
+                correction = 0
             else: 
-                maxTime = currentTime + (item["endTick"] - item["startTick"] + 1) * item["timePerTick"]
+                correction = 1
             
+            if isinstance(item["endTick"], int):
+                maxTime = currentTime + (item["endTick"] - item["startTick"] + correction) * item["tickDuration"]
+            else:
+                maxTime = datetime.fromisoformat("9999-01-01T00:00:00Z")
+
             if maxTime > self.data["endTime"]:
-                item["endTick"] = item["startTick"] + (self.data["endTime"] - currentTime) / item["timePerTick"] - 1
+                item["endTick"] = item["startTick"] + math.ceil((self.data["endTime"] - currentTime) / item["tickDuration"]) - 1
+                maxTime = currentTime + (item["endTick"] - item["startTick"] + correction) * item["tickDuration"]
                 
             currentTime = maxTime
             currentTick += item["endTick"] - item["startTick"] + 1
@@ -133,7 +108,7 @@ class SIMBA:
         self.Scheduler.start(self.data["initialTick"], self.data["initialTime"])
         
         for item in self.data["scheduleIntervals"]:
-            self.Scheduler.step(max(item["startTick"], self.data["continueFromTick"]), item["endTick"], item["timePerTick"])
+            self.Scheduler.step(max(item["startTick"], self.data["continueFromTick"]), item["endTick"], item["tickDuration"])
         
         self.Scheduler.end()
         return
@@ -149,3 +124,6 @@ class SIMBA:
     
     def getCellId(self):
         return self.data["cellId"]
+    
+    def getInstallDir(self):
+        return self.InstallDir

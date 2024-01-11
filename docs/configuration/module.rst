@@ -38,26 +38,3 @@ The normative JSON schema can be found at:  :doc:`Module Schema </schema/module>
 
 Examples
 --------
-
-Example using a different simulation duration time for ticks.
-
-.. code-block:: JSON
-
-  {
-    "$schema": "https://raw.githubusercontent.com/NSSAC/SIMBA_driver/schema/driver.json",
-    "endTime" : "PT1209600S",
-    "scheduleIntervals" : [
-      {
-        "endTick" : 6,
-        "timePerTick" :  "PT600S"
-      },
-      {
-        "endTick" : 100,
-        "timePerTick" :  "PT1800S"
-      },
-      {
-        "timePerTick" :  "PT3600S"
-      }
-    ]
-  }
-

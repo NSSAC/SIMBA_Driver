@@ -49,14 +49,14 @@ Example using a different simulation duration time for ticks.
     "scheduleIntervals" : [
       {
         "endTick" : 6,
-        "timePerTick" :  "PT600S"
+        "tickDuration" :  "PT600S"
       },
       {
         "endTick" : 100,
-        "timePerTick" :  "PT1800S"
+        "tickDuration" :  "PT1800S"
       },
       {
-        "timePerTick" :  "PT3600S"
+        "tickDuration" :  "PT3600S"
       }
     ]
   }

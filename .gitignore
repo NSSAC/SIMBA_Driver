@@ -4,3 +4,7 @@
 *.pyc
 
 docs/_build/
+
+simbadriver.simbadriver.log
+
+.vscode/

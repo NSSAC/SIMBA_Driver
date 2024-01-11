@@ -32,7 +32,7 @@
     },
     "endTime": {
       "title": "The stooping time of the simulation",
-      "description": "The simulation stops once initialTime plus all accumulated durations (timePerTick) exceeds the endTime",
+      "description": "The simulation stops once initialTime plus all accumulated durations (tickDuration) exceeds the endTime",
       "type": "string",
       "format": "duration"
     },
@@ -68,14 +68,14 @@
             ],
             "default": "Infinity"
           },
-          "timePerTick": {
+          "tickDuration": {
             "title": "Time Duration per Tick of the Interval",
             "type": "string",
             "format": "duration"
           }
         },
         "required": [
-          "timePerTick"
+          "tickDuration"
         ]
       }
     }

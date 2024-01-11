@@ -2,12 +2,14 @@
 from importlib import import_module
 import sys
 import numbers
+from simbadriver.parslModule import ParslModule
+from functools import cmp_to_key
 
 def scheduleCompare(A, B):
     if A["tick"] != B["tick"]:
         return A["tick"] - B["tick"]
     
-    delta = A["priority"] - B["priority"]
+    delta = B["priority"] - A["priority"]
     
     return -1 if delta < 0 else 1 if delta > 0 else 0
 
@@ -15,40 +17,8 @@ class Scheduler:
     
     def __init__(self, SIMBA):
         self.SIMBA = SIMBA
-        
-        self.schema = {
-            "type" : "array",
-            "items" : {
-                "type" : "object",
-                "properties" : {
-                    "name" : {"type" : "string"},
-                    "class" : {"type" : "string"},
-                    "package" : {"type" : "string"},
-                    "priority" : { 
-                        "anyOf" : [
-                            {"type" : "number"},
-                            {"enum" : ["-Infinity", "Infinity"]}
-                            ]
-                        },
-                    "startTick" : {"type" : "integer", "default" : 0},
-                    "tickIncrement" : {"type" : "number", "minimum": 0, "default" : 0},
-                    "endTick" : { 
-                        "anyOf" : [
-                            {"type" : "integer"},
-                            {"enum" : ["Infinity"]}
-                            ],
-                        "default" : "startTick if tickIncrement is 0, Infinity otherwise"
-                        },
-                    "moduleData" : {"type" : "object"}
-                    },
-                "required" : [
-                    "name",
-                    "class",
-                    "priority"
-                    ]
-                }
-            }
-        
+
+        self.schema = self.SIMBA.getConfiguration().loadJsonFile(SIMBA.getInstallDir().joinpath("schema", "schedule.json"))
         self.data = self.SIMBA.getConfiguration().loadJsonFile("schedule.json", self.schema)
         
         self.schedule = list()
@@ -92,7 +62,7 @@ class Scheduler:
         for item in self.data:
             self.schedule.append({"tick" : item["startTick"], "priority" : item["priority"], "moduleData" : item})
 
-        self.schedule.sort(scheduleCompare)
+        self.schedule.sort(key=cmp_to_key(scheduleCompare))
          
         return success
         
@@ -130,7 +100,7 @@ class Scheduler:
         for item in toBeRemoved:
             self.schedule.remove(item)
         
-        self.schedule.sort(scheduleCompare)
+        self.schedule.sort(key=cmp_to_key(scheduleCompare))
         
         return success
         
@@ -157,20 +127,12 @@ class Scheduler:
         return success
 
     def __addModule(self, module):
-        if not "package" in module:
-            module["package"] = None
-        
-        if not "moduleData" in module:
-            module["moduleData"] = None
+        if not module['type'] in [ 'parsl' ]:
+            sys.exit("ERROR: Module '" + module["type"] + "' is not supported.")
 
-        if module["package"] == None:
-            Imported = import_module(module["class"])
-        else:
-            Imported = import_module("." + module["class"], module["package"])
-            
-        Constructor = getattr(Imported, module["class"])
-        module["instance"] = Constructor(self.SIMBA, module["moduleData"])
-        
+        module['instance'] = ParslModule(self.SIMBA, module)
+
+
         if not isinstance(module["priority"], numbers.Real):
             if module["priority"] == "-Infinity":
                 module["priority"] = -float("inf")
@@ -178,26 +140,15 @@ class Scheduler:
                 module["priority"] = float("inf")
 
         if not "startTick" in module:
-            module ["startTick"] = 0
+            module ["startTick"] = -float("inf")
 
-        if module["startTick"] < 0 :
-            sys.exit("ERROR: Module '" + module["name"] + "' invalid startTick = '" + str(module["startTick"]) + "'.")
-            
         if not "tickIncrement" in module:
-            module ["tickIncrement"] = 0
-            
-        if module["tickIncrement"] < 0:
-            sys.exit("ERROR: Module '" + module["name"] + "' invalid tickIncrement = '" + str(module["tickIncrement"]) + "'.")
+            module ["tickIncrement"] = 1
             
         if not "endTick" in module:
-            if module["tickIncrement"] == 0:
-                module["endTick"] = module["startTick"]
-            else:
-                module["endTick"] = float("inf")
-        elif not isinstance(module["endTick"], int):
             module["endTick"] = float("inf")
                 
-        if module["endTick"] < module["startTick"] or (not isinstance(module["endTick"], int) and module["endTick"] != float("inf")):
+        if module["endTick"] < module["startTick"]:
             sys.exit("ERROR: Module '" + module["name"] + "' invalid endTick = '" + str(module["endTick"]) + "'.")
             
         return True

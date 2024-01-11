@@ -1,0 +1,24 @@
+[
+{
+    "name": "SlurmModule1",
+    "command": "hostname",
+    "priority": "Infinity",
+    "startTick": 0,
+    "tickIncrement": 1,
+    "moduleData": {
+        "mode": "preStep"
+    },
+    "type": "parsl"
+  },
+  {
+    "name": "SlurmModule2",
+    "command": "hostname",
+    "priority": 10,
+    "startTick": 0,
+    "tickIncrement": 2,
+    "moduleData": {
+        "mode": "postStep"
+    },
+    "type": "parsl"
+  }
+]

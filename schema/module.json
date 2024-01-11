@@ -63,6 +63,11 @@
       "description": "The target date time in ISO format (not provided for mode: end).",
       "type": "string",
       "format": "date-time"
+    },
+    "moduleData": {
+      "title": "Module specific Data",
+      "description": "Module specific data taken from the module schedule.",
+      "type": "object"
     }
   }
 }

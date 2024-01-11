@@ -9,82 +9,180 @@
     "https://json-schema.org/draft/2019-09/meta/validation": true,
     "https://json-schema.org/draft/2019-09/meta/meta-data": true
   },
+  "definitions": {
+    "schedule": {
+      "$id": "schedule",
+      "title": "Schedule",
+      "$$target": [
+        "#/definitions/schedule"
+      ],
+      "description": "The execution schedule of a model",
+      "type": "object",
+      "properties": {
+        "priority": {
+          "title": "Priority of Module Execution",
+          "description": "Higher priority is executed first. Priorities must be unique.",
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "enum": [
+                "-Infinity",
+                "Infinity"
+              ]
+            }
+          ]
+        },
+        "startTick": {
+          "title": "Start Tick",
+          "description": "The currentTick at which the module is executed first (default: -infinity).",
+          "type": "number",
+          "multipleOf": 1
+        },
+        "endTick": {
+          "title": "End Tick",
+          "description": "The targetTick for which the module is executed last (default: infinity).",
+          "type": "number",
+          "multipleOf": 1
+        },
+        "tickIncrement": {
+          "title": "Tick Increment",
+          "description": "The tick increment in which the module is executed (default: 1).",
+          "type": "number",
+          "multipleOf": 1,
+          "minimum": 1
+        }
+      },
+      "required": [
+        "name",
+        "priority"
+      ]
+    },
+    "module": {
+      "$id": "module",
+      "title": "Module",
+      "$$target": [
+        "#/definitions/module"
+      ],
+      "description": "Description of module specific information",
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "name": {
+              "title": "Module Name",
+              "description": "The name of the module.",
+              "type": "string"
+            },
+            "command": {
+              "title": "Module Command",
+              "description": "The command to execute the module.",
+              "type": "string"
+            },
+            "moduleData": {
+              "title": "Module specific Data",
+              "description": "Module specific data provided to the module upon execution.",
+              "type": "object"
+            }
+          },
+          "required": [
+            "type",
+            "name",
+            "command"
+          ]
+        },
+        {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/parslModule"
+            }
+          ]
+        }
+      ]
+    },
+    "parslModule": {
+      "$id": "parslModule",
+      "title": "Parsl Module",
+      "$$target": [
+        "#/definitions/parslModule"
+      ],
+      "description": "This describes module details required to execute a module through parsl (https://parsl.readthedocs.io/en/stable/index.html)",
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "parsl"
+        },
+        "executor": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "description": "Executor: https://parsl.readthedocs.io/en/stable/stubs/parsl.executors.HighThroughputExecutor.html#parsl.executors.HighThroughputExecutor",
+              "const": "HighThroughputExecutor"
+            }
+          },
+          "required": [
+            "type"
+          ]
+        },
+        "provider": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "description": "Slurm Provide: https://parsl.readthedocs.io/en/stable/stubs/parsl.providers.SlurmProvider.html#parsl.providers.SlurmProvider",
+              "const": "SlurmProvider"
+            }
+          },
+          "required": [
+            "type"
+          ]
+        },
+        "launcher": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "description": "srun Launcher: https://parsl.readthedocs.io/en/stable/stubs/parsl.launchers.SrunLauncher.html#parsl.launchers.SrunLauncher",
+              "const": "SrunLauncher"
+            },
+            "debug": {
+              "type": "boolean",
+              "default": true  
+            },
+            "overrides": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "required": [
+            "type"
+          ]
+        },
+        "channel": {
+          "type": "object"
+        },
+        "storageAccess": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "type"
+      ]
+    }
+  },
   "title": "SIMBA Scheduler",
   "description": "The schema describes which and how modules are executed during each tick of the driver.",
   "type": "array",
   "items": {
-    "title": "Module Schedule",
-    "description": "A specification of a module and its schedule.",
-    "type": "object",
-    "properties": {
-      "name": {
-        "title": "Module Name",
-        "description": "The name of the module.",
-        "type": "string"
+    "allOf": [
+      {
+        "$ref": "#/definitions/schedule"
       },
-      "class": {
-        "title": "Module Python Class",
-        "description": "The python class name of the module.",
-        "type": "string"
-      },
-      "package": {
-        "title": "Module Python Package",
-        "description": "The python package name of the module.",
-        "type": "string"
-      },
-      "priority": {
-        "title": "Priority of Module Execution",
-        "description": "Higher priority is executed first. Priorities must be unique.",
-        "anyOf": [
-          {
-            "type": "number"
-          },
-          {
-            "enum": [
-              "-Infinity",
-              "Infinity"
-            ]
-          }
-        ]
-      },
-      "startTick": {
-        "title": "Module Start Tick",
-        "description": "The tick the module is executed the first time.",
-        "type": "integer",
-        "default": 0
-      },
-      "tickIncrement": {
-        "title": "Module Tick Increment",
-        "description": "The increment determining the next tick at which the module is executed. If the increment is 0 the module is only executed once.",
-        "type": "number",
-        "minimum": 0,
-        "default": 0
-      },
-      "endTick": {
-        "title": "Module End Tick",
-        "description": "The last Tick at which the Module may be executed.",
-        "anyOf": [
-          {
-            "type": "integer"
-          },
-          {
-            "enum": [
-              "Infinity"
-            ]
-          }
-        ],
-        "default": "startTick if tickIncrement is 0, Infinity otherwise."
-      },
-      "moduleData": {
-        "title": "Module specific Data",
-        "description": "Module specific data provided to the module upon execution.",
-        "type": "object"
+      {
+        "$ref": "#/definitions/module"
       }
-    },
-    "required": [
-      "name",
-      "class",
-      "priority"
     ]
-  }
+}
 }

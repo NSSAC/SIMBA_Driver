@@ -1,20 +1,27 @@
 from abc import ABCMeta, abstractmethod
 
-class ModuleWrapper():
+class Module():
     __metaclass__ = ABCMeta
     
     def __init__(self, SIMBA, data):
         self.SIMBA = SIMBA
-        self.data = data
+        self.data = {}
+        self.data['name'] = data['name']
+        self.data['command'] = data['command']
+        if not "moduleData" in data:
+            self.data["moduleData"] = None
+        else :
+            self.data["moduleData"] = data['moduleData']
+
         self.__lastRunTick = None
         self.__lastRunTime = None
-        
-        self._init()
     
+        self._init(data)
+        
     @abstractmethod   
-    def _init(self):
+    def _init(self, data):
         return False
-
+    
     def start(self, startTick, startTime):
         self.__lastRunTick = startTick
         self.__lastRunTime = startTime
