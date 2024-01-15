@@ -1,6 +1,6 @@
 Driver Schema
 =============
 
-.. jsonschema:: /raid/shoops/git/SIMBA_Driver/schema/driver.json
+.. jsonschema:: https://raw.githubusercontent.com/NSSAC/SIMBA_Driver/master/schema/driver.json
 
 

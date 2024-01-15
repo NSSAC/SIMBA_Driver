@@ -1,5 +1,5 @@
 Schedule Schema 
 ===============
 
-.. jsonschema:: /raid/shoops/git/SIMBA_Driver/schema/schedule.json
+.. jsonschema:: https://raw.githubusercontent.com/NSSAC/SIMBA_Driver/master/schema/schedule.json
 

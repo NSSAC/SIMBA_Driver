@@ -1,9 +1,10 @@
 # from SIMBA.SIMBA import SIMBA
-from importlib import import_module
 import sys
+import os
 import numbers
-from simbadriver.parslModule import ParslModule
+from pathlib import Path
 from functools import cmp_to_key
+from simbadriver.parslModule import ParslModule
 
 def scheduleCompare(A, B):
     if A["tick"] != B["tick"]:
@@ -26,6 +27,7 @@ class Scheduler:
         priorities = set()
         
         for item in self.data:
+            item['index'] = len(priorities) + 1
             self.__addModule(item)
             
             """ Priorities must be unique """
@@ -46,16 +48,15 @@ class Scheduler:
         
         success = True
         
-        try:
-            for item in self.data:
-                success &= item["instance"].start(startTick, startTime)
-                
-                if not success:
-                    break
-                
-        except:
-            success = False
+        if not os.path.exists('start'):
+            os.mkdir('start')
         
+        for item in self.data:
+            success &= item["instance"].start(startTick, startTime)
+            
+            if not success:
+                break
+            
         if not success:
             sys.exit("ERROR: Module '" + item["name"] + "' failed to start.")
             
@@ -72,6 +73,9 @@ class Scheduler:
         startTick = self.currentTick
         
         while self.currentTick < endTick:
+            if not os.path.exists(str(self.currentTick)):
+                os.mkdir(str(self.currentTick))
+        
             success &= self.__internalStep(deltaTime, self.currentTick < continueFromTick)
             self.currentTick += 1
             self.currentTime = startTime + (self.currentTick - startTick) * deltaTime
@@ -107,6 +111,9 @@ class Scheduler:
     def end(self):
         success = True
         
+        if not os.path.exists('end'):
+            os.mkdir('end')
+        
         for item in self.data:
             try:
                 success &= item["instance"].end(self.currentTick, self.currentTime)
@@ -131,7 +138,6 @@ class Scheduler:
             sys.exit("ERROR: Module '" + module["type"] + "' is not supported.")
 
         module['instance'] = ParslModule(self.SIMBA, module)
-
 
         if not isinstance(module["priority"], numbers.Real):
             if module["priority"] == "-Infinity":

@@ -12,7 +12,8 @@ class SIMBA:
     def __init__(self, configurationDirectory):
         self.Configuration = Configuration(configurationDirectory)
         self.InstallDir = Path(__file__).parent.parent.resolve()
-                
+        self.pwd = Path.cwd()
+        
         self.schema = self.Configuration.loadJsonFile(self.InstallDir.joinpath("schema", "driver.json"))
         self.data = self.Configuration.loadJsonFile("driver.json", self.schema)
 
@@ -127,3 +128,6 @@ class SIMBA:
     
     def getInstallDir(self):
         return self.InstallDir
+    
+    def getPwd(self):
+        return self.pwd

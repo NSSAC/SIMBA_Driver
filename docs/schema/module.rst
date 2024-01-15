@@ -1,6 +1,6 @@
 Module Schema
 =============
 
-.. jsonschema:: /raid/shoops/git/SIMBA_Driver/schema/module.json
+.. jsonschema:: https://raw.githubusercontent.com/NSSAC/SIMBA_Driver/master/schema/module.json
 
 

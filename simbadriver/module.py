@@ -1,3 +1,4 @@
+from pathlib import Path
 from abc import ABCMeta, abstractmethod
 
 class Module():
@@ -5,8 +6,10 @@ class Module():
     
     def __init__(self, SIMBA, data):
         self.SIMBA = SIMBA
+        
         self.data = {}
         self.data['name'] = data['name']
+        self.data['index'] = data['index']
         self.data['command'] = data['command']
         if not "moduleData" in data:
             self.data["moduleData"] = None
@@ -25,15 +28,17 @@ class Module():
     def start(self, startTick, startTime):
         self.__lastRunTick = startTick
         self.__lastRunTime = startTime
+        self.config = Path('start').joinpath('module_' + str(self.data['index']) + '.json')
         
         moduleConfig = {
             'mode': 'start', 
             'targetTick': startTick,
-            'targetTime': startTime,
+            'targetTime': startTime.isoformat() + 'Z',
             'moduleData': self.data['moduleData']
             }
 
-        self.SIMBA.getConfiguration().writeJsonFile()
+        self.SIMBA.getConfiguration().writeJsonFile(self.config, moduleConfig)
+        
         return self._start(startTick, startTime)
         
     @abstractmethod   
@@ -42,6 +47,20 @@ class Module():
         
     def step(self, currentTick, currentTime, deltaTick, deltaTime, skipExecution):
         success = True
+        self.config = Path(str(currentTick)).joinpath('module_' + str(self.data['index']) + '.json')
+        
+        moduleConfig = {
+            'mode': 'step', 
+            'targetTick': self.__lastRunTick,
+            'targetTime': self.__lastRunTime.isoformat() + 'Z',
+            'currentTick': currentTick,
+            'currentTime': currentTime.isoformat() + 'Z',
+            'targetTick': currentTick + deltaTick,
+            'targetTime': (currentTime + deltaTime).isoformat() + 'Z',
+            'moduleData': self.data['moduleData']
+            }
+
+        self.SIMBA.getConfiguration().writeJsonFile(self.config, moduleConfig)
         
         if not skipExecution:
             success = self._step(self.__lastRunTick, self.__lastRunTime, currentTick, currentTime, currentTick + deltaTick, currentTime + deltaTime)
@@ -56,6 +75,15 @@ class Module():
         return False
         
     def end(self, endTick, endTime):
+        self.config = Path('end').joinpath('module_' + str(self.data['index']) + '.json')
+        moduleConfig = {
+            'mode': 'end', 
+            'targetTick': endTick,
+            'targetTime': endTime.isoformat() + 'Z',
+            'moduleData': self.data['moduleData']
+            }
+
+        self.SIMBA.getConfiguration().writeJsonFile(self.config, moduleConfig)
         
         success = self._end(self.__lastRunTick, self.__lastRunTime, endTick, endTime)
         
