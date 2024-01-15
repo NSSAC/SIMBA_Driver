@@ -26,6 +26,14 @@ class Module():
         self.__lastRunTick = startTick
         self.__lastRunTime = startTime
         
+        moduleConfig = {
+            'mode': 'start', 
+            'targetTick': startTick,
+            'targetTime': startTime,
+            'moduleData': self.data['moduleData']
+            }
+
+        self.SIMBA.getConfiguration().writeJsonFile()
         return self._start(startTick, startTime)
         
     @abstractmethod   

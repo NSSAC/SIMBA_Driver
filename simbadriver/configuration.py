@@ -23,3 +23,9 @@ class Configuration:
             
         jsonFile.close()
         return dictionary
+
+    def writeJsonFile(self, filenName, dictionary, schema = None):
+        if schema != None:
+            validate(dictionary, schema)
+            
+        json.dump(dictionary, filenName, indent=2)

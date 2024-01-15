@@ -4,11 +4,11 @@ from parsl.providers import SlurmProvider
 from parsl.executors import HighThroughputExecutor
 from parsl.addresses import address_by_hostname
 from parsl.data_provider.globus import GlobusStaging
+from parsl.app.app import bash_app
 
 from simbadriver.module import Module
 
 class ParslModule(Module):
-    
     def _init(self, data):
         launcher_debug = True
         launcher_override = ''
@@ -42,3 +42,7 @@ class ParslModule(Module):
     def _end(self, lastRunTick, lastRunTime, endTick, endTime):
         return True
         
+    @bash_app
+    def _submit(self, stdout='hostname.stdout', stderr='hostname.stderr'):
+        return self.data['command']
+
