@@ -118,8 +118,8 @@ class ParslModule(Module):
             'launch_cmd': None,
             'address': None,
             'worker_ports': None,
-            'worker_port_range': [54000, 55000],
-            'interchange_port_range': [55000, 56000],
+            'worker_port_range': (54000, 55000),
+            'interchange_port_range': (55000, 56000),
             'storage_access': None,
             'working_dir': None,
             'worker_debug': False,
@@ -149,9 +149,9 @@ class ParslModule(Module):
             if 'worker_ports' in data['executor']:
                 executor['worker_ports'] = data['executor']['worker_ports']
             if 'worker_port_range' in data['executor']:
-                executor['worker_port_range'] = data['executor']['worker_port_range']
+                executor['worker_port_range'] = (data['executor']['worker_port_range'][0], data['executor']['worker_port_range'][1])
             if 'interchange_port_range' in data['executor']:
-                executor['interchange_port_range'] = data['executor']['interchange_port_range']
+                executor['interchange_port_range'] = (data['executor']['interchange_port_range'][0], data['executor']['interchange_port_range'][1])
             if 'storage_access' in data['executor']:
                 executor['storage_access'] = data['executor']['storage_access']
             if 'working_dir' in data['executor']:

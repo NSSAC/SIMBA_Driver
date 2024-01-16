@@ -1,7 +1,7 @@
 [
 {
     "name": "SlurmModule1",
-    "command": "hostname",
+    "command": "bin/application.sh",
     "priority": "Infinity",
     "startTick": 0,
     "tickIncrement": 1,
@@ -27,7 +27,7 @@
   },
   {
     "name": "SlurmModule2",
-    "command": "hostname",
+    "command": "bin/application.sh",
     "priority": 10,
     "startTick": 0,
     "tickIncrement": 2,

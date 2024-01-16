@@ -79,26 +79,26 @@
         "worker_port_range": {
           "oneOf": [
             {
-              "$ref": "#/definitions/integer"
+              "$ref": "#/definitions/integerTuple"
             },
             {
               "type": "null"
             }
           ],
           "description": "Worker ports will be chosen between the two integers provided.",
-          "default": "(54000, 55000)"
+          "default": "[54000, 55000]"
         },
         "interchange_port_range": {
           "oneOf": [
             {
-              "$ref": "#/definitions/integer"
+              "$ref": "#/definitions/integerTuple"
             },
             {
               "type": "null"
             }
           ],
           "description": "Port range used by Parsl to communicate with the Interchange.",
-          "default": "(55000, 56000)"
+          "default": "[55000, 56000]"
         },
         "storage_access": {
           "oneOf": [

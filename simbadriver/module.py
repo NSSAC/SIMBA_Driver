@@ -10,7 +10,8 @@ class Module():
         self.data = {}
         self.data['name'] = data['name']
         self.data['index'] = data['index']
-        self.data['command'] = data['command']
+        self.data['command'] = self.SIMBA.getConfiguration().resolveCmd(data['command'])
+        
         if not "moduleData" in data:
             self.data["moduleData"] = None
         else :

@@ -1,6 +1,6 @@
-import os
 import json
 import sys
+from pathlib import Path
 from jsonschema import validate
 
 class Configuration:
@@ -11,10 +11,10 @@ class Configuration:
     def loadJsonFile(self, fileName, schema = None):
     
         try:
-            jsonFile = open(os.path.join(self.configurationDirectory, fileName),"r")
+            jsonFile = open(Path(self.configurationDirectory).joinpath(fileName),"r")
         
         except:
-            sys.exit("ERROR: File '" + os.path.join(self.configurationDirectory, fileName) + "' does not exist.")
+            sys.exit("ERROR: File '" + Path(self.configurationDirectory).joinpath(fileName) + "' does not exist.")
         
         dictionary = json.load(jsonFile)
         
@@ -30,3 +30,12 @@ class Configuration:
 
         file = open(fileName, 'w')            
         json.dump(dictionary, file, indent=2)
+        
+    def resolveCmd(self, cmd):
+        if Path(cmd).is_absolute():
+            return cmd
+        
+        if Path(self.configurationDirectory).joinpath(cmd).exists():
+            return str(Path(self.configurationDirectory).joinpath(cmd))
+            
+        return cmd
