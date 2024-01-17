@@ -11,25 +11,24 @@ import parsl
 
 from simbadriver.module import Module
 
+@bash_app
+def srunCommand(command, config, stdout = 'module.stdout', stderr = 'module.stderr'):
+    return command + ' ' + config
+
 class ParslModule(Module):
     def _init(self, data):
-        launcher = {
+        self.launcher = {
             'debug': True,
             'overrides': ''
             }
 
         if 'launcher' in data:
             if 'debug' in data['launcher']:
-                launcher['debug'] = data['launcher']['debug']
+                self.launcher['debug'] = data['launcher']['debug']
             if 'overrides' in data['launcher']:
-                launcher['overrides'] = data['launcher']['overrides']
+                self.launcher['overrides'] = data['launcher']['overrides']
 
-        self.launcher = SrunLauncher(
-            debug = launcher['debug'], 
-            overrides = launcher['overrides']
-            )
-
-        provider = {
+        self.provider = {
             'partition': None,
             'account': None,
             'qos': None,
@@ -55,65 +54,43 @@ class ParslModule(Module):
                 raise Exception('Unsupported provider: ' + data['provider']['type'])
             
             if 'partition' in data['provider']:
-                provider['partition'] = data['provider']['partition']
+                self.provider['partition'] = data['provider']['partition']
             if 'account' in data['provider']:
-                provider['account'] = data['provider']['account']
+                self.provider['account'] = data['provider']['account']
             if 'qos' in data['provider']:
-                provider['qos'] = data['provider']['qos']
+                self.provider['qos'] = data['provider']['qos']
             if 'constraint' in data['provider']:
-                provider['constraint'] = data['provider']['constraint']
+                self.provider['constraint'] = data['provider']['constraint']
             if 'channel' in data['provider']:
-                provider['channel'] = data['provider']['channel']
+                self.provider['channel'] = data['provider']['channel']
             if 'nodes_per_block' in data['provider']:
-                provider['nodes_per_block'] = data['provider']['nodes_per_block']
+                self.provider['nodes_per_block'] = data['provider']['nodes_per_block']
             if 'cores_per_node' in data['provider']:
-                provider['cores_per_node'] = data['provider']['cores_per_node']
+                self.provider['cores_per_node'] = data['provider']['cores_per_node']
             if 'mem_per_node' in data['provider']:
-                provider['mem_per_node'] = data['provider']['mem_per_node']
+                self.provider['mem_per_node'] = data['provider']['mem_per_node']
             if 'init_blocks' in data['provider']:
-                provider['init_blocks'] = data['provider']['init_blocks']
+                self.provider['init_blocks'] = data['provider']['init_blocks']
             if 'min_blocks' in data['provider']:
-                provider['min_blocks'] = data['provider']['min_blocks']
+                self.provider['min_blocks'] = data['provider']['min_blocks']
             if 'max_blocks' in data['provider']:
-                provider['max_blocks'] = data['provider']['max_blocks']
+                self.provider['max_blocks'] = data['provider']['max_blocks']
             if 'parallelism' in data['provider']:
-                provider['parallelism'] = data['provider']['parallelism']
+                self.provider['parallelism'] = data['provider']['parallelism']
             if 'walltime' in data['provider']:
-                provider['walltime'] = data['provider']['walltime']
+                self.provider['walltime'] = data['provider']['walltime']
             if 'scheduler_options' in data['provider']:
-                provider['scheduler_options'] = data['provider']['scheduler_options']
+                self.provider['scheduler_options'] = data['provider']['scheduler_options']
             if 'regex_job_id' in data['provider']:
-                provider['regex_job_id'] = data['provider']['regex_job_id']
+                self.provider['regex_job_id'] = data['provider']['regex_job_id']
             if 'worker_init' in data['provider']:
-                provider['worker_init'] = data['provider']['worker_init']
+                self.provider['worker_init'] = data['provider']['worker_init']
             if 'exclusive' in data['provider']:
-                provider['exclusive'] = data['provider']['exclusive']
+                self.provider['exclusive'] = data['provider']['exclusive']
             if 'move_files' in data['provider']:
-                provider['move_files'] = data['provider']['move_files']
+                self.provider['move_files'] = data['provider']['move_files']
 
-        self.provider = SlurmProvider(
-            partition = provider['partition'],
-            account = provider['account'],
-            qos = provider['qos'],
-            constraint = provider['constraint'],
-            channel = provider['channel'],
-            nodes_per_block = provider['nodes_per_block'],
-            cores_per_node = provider['cores_per_node'],
-            mem_per_node = provider['mem_per_node'],
-            init_blocks = provider['init_blocks'],
-            min_blocks = provider['min_blocks'],
-            max_blocks = provider['max_blocks'],
-            parallelism = provider['parallelism'],
-            walltime = provider['walltime'],
-            scheduler_options = provider['scheduler_options'],
-            regex_job_id = provider['regex_job_id'],
-            worker_init = provider['worker_init'],
-            exclusive = provider['exclusive'],
-            move_files = provider['move_files'],
-            launcher = self.launcher
-            )
-
-        executor = {
+        self.executor = {
             'label': 'HighThroughputExecutor',
             'launch_cmd': None,
             'address': None,
@@ -141,80 +118,99 @@ class ParslModule(Module):
                 raise Exception('Unsupported executor: ' + data['executor']['type'])
             
             if 'label' in data['executor']:
-                executor['label'] = data['executor']['label']
+                self.executor['label'] = data['executor']['label']
             if 'launch_cmd' in data['executor']:
-                executor['launch_cmd'] = data['executor']['launch_cmd']
+                self.executor['launch_cmd'] = data['executor']['launch_cmd']
             if 'address' in data['executor']:
-                executor['address'] = data['executor']['address']
+                self.executor['address'] = data['executor']['address']
             if 'worker_ports' in data['executor']:
-                executor['worker_ports'] = data['executor']['worker_ports']
+                self.executor['worker_ports'] = data['executor']['worker_ports']
             if 'worker_port_range' in data['executor']:
-                executor['worker_port_range'] = (data['executor']['worker_port_range'][0], data['executor']['worker_port_range'][1])
+                self.executor['worker_port_range'] = (data['executor']['worker_port_range'][0], data['executor']['worker_port_range'][1])
             if 'interchange_port_range' in data['executor']:
-                executor['interchange_port_range'] = (data['executor']['interchange_port_range'][0], data['executor']['interchange_port_range'][1])
+                self.executor['interchange_port_range'] = (data['executor']['interchange_port_range'][0], data['executor']['interchange_port_range'][1])
             if 'storage_access' in data['executor']:
-                executor['storage_access'] = data['executor']['storage_access']
+                self.executor['storage_access'] = data['executor']['storage_access']
             if 'working_dir' in data['executor']:
-                executor['working_dir'] = data['executor']['working_dir']
+                self.executor['working_dir'] = data['executor']['working_dir']
             if 'worker_debug' in data['executor']:
-                executor['worker_debug'] = data['executor']['worker_debug']
+                self.executor['worker_debug'] = data['executor']['worker_debug']
             if 'cores_per_worker' in data['executor']:
-                executor['cores_per_worker'] = data['executor']['cores_per_worker']
+                self.executor['cores_per_worker'] = data['executor']['cores_per_worker']
             if 'mem_per_worker' in data['executor']:
-                executor['mem_per_worker'] = data['executor']['mem_per_worker']
+                self.executor['mem_per_worker'] = data['executor']['mem_per_worker']
             if 'max_workers' in data['executor']:
-                executor['max_workers'] = data['executor']['max_workers']
+                self.executor['max_workers'] = data['executor']['max_workers']
             if 'cpu_affinity' in data['executor']:
-                executor['cpu_affinity'] = data['executor']['cpu_affinity']
+                self.executor['cpu_affinity'] = data['executor']['cpu_affinity']
             if 'available_accelerators' in data['executor']:
-                executor['available_accelerators'] = data['executor']['available_accelerators']
+                self.executor['available_accelerators'] = data['executor']['available_accelerators']
             if 'prefetch_capacity' in data['executor']:
-                executor['prefetch_capacity'] = data['executor']['prefetch_capacity']
+                self.executor['prefetch_capacity'] = data['executor']['prefetch_capacity']
             if 'heartbeat_threshold' in data['executor']:
-                executor['heartbeat_threshold'] = data['executor']['heartbeat_threshold']
+                self.executor['heartbeat_threshold'] = data['executor']['heartbeat_threshold']
             if 'heartbeat_period' in data['executor']:
-                executor['heartbeat_period'] = data['executor']['heartbeat_period']
+                self.executor['heartbeat_period'] = data['executor']['heartbeat_period']
             if 'poll_period' in data['executor']:
-                executor['poll_period'] = data['executor']['poll_period']
+                self.executor['poll_period'] = data['executor']['poll_period']
             if 'address_probe_timeout' in data['executor']:
-                executor['address_probe_timeout'] = data['executor']['address_probe_timeout']
+                self.executor['address_probe_timeout'] = data['executor']['address_probe_timeout']
             if 'worker_logdir_root' in data['executor']:
-                executor['worker_logdir_root'] = data['executor']['worker_logdir_root']
-            
-            
-        self.executor = HighThroughputExecutor(
-            label = executor['label'],
-            launch_cmd = executor['launch_cmd'],
-            address = executor['address'],
-            worker_ports = executor['worker_ports'],
-            worker_port_range = executor['worker_port_range'],
-            interchange_port_range = executor['interchange_port_range'],
-            storage_access = executor['storage_access'],
-            working_dir = executor['working_dir'],
-            worker_debug = executor['worker_debug'],
-            cores_per_worker = executor['cores_per_worker'],
-            mem_per_worker = executor['mem_per_worker'],
-            max_workers = executor['max_workers'],
-            cpu_affinity = executor['cpu_affinity'],
-            available_accelerators = executor['available_accelerators'],
-            prefetch_capacity = executor['prefetch_capacity'],
-            heartbeat_threshold = executor['heartbeat_threshold'],
-            heartbeat_period = executor['heartbeat_period'],
-            poll_period = executor['poll_period'],
-            address_probe_timeout = executor['address_probe_timeout'],
-            worker_logdir_root = executor['worker_logdir_root'],
-            provider = self.provider
-            )
+                self.executor['worker_logdir_root'] = data['executor']['worker_logdir_root']
 
         return
 
-    @bash_app
-    def srunCommand(self, config, stdout = 'module.stdout', stderr = 'module.stderr'):
-        return self.command + ' ' + self.config
-    
     def execute(self):
-        parsl.load(Config(executors = [self.executor]))
-        self.srunCommand().result()
+        parsl.load(Config(executors = [
+            HighThroughputExecutor(
+            label = self.executor['label'],
+            launch_cmd = self.executor['launch_cmd'],
+            address = self.executor['address'],
+            worker_ports = self.executor['worker_ports'],
+            worker_port_range = self.executor['worker_port_range'],
+            interchange_port_range = self.executor['interchange_port_range'],
+            storage_access = self.executor['storage_access'],
+            working_dir = self.executor['working_dir'],
+            worker_debug = self.executor['worker_debug'],
+            cores_per_worker = self.executor['cores_per_worker'],
+            mem_per_worker = self.executor['mem_per_worker'],
+            max_workers = self.executor['max_workers'],
+            cpu_affinity = self.executor['cpu_affinity'],
+            available_accelerators = self.executor['available_accelerators'],
+            prefetch_capacity = self.executor['prefetch_capacity'],
+            heartbeat_threshold = self.executor['heartbeat_threshold'],
+            heartbeat_period = self.executor['heartbeat_period'],
+            poll_period = self.executor['poll_period'],
+            address_probe_timeout = self.executor['address_probe_timeout'],
+            worker_logdir_root = self.executor['worker_logdir_root'],
+            provider =  SlurmProvider(
+                partition = self.provider['partition'],
+                account = self.provider['account'],
+                qos = self.provider['qos'],
+                constraint = self.provider['constraint'],
+                channel = self.provider['channel'],
+                nodes_per_block = self.provider['nodes_per_block'],
+                cores_per_node = self.provider['cores_per_node'],
+                mem_per_node = self.provider['mem_per_node'],
+                init_blocks = self.provider['init_blocks'],
+                min_blocks = self.provider['min_blocks'],
+                max_blocks = self.provider['max_blocks'],
+                parallelism = self.provider['parallelism'],
+                walltime = self.provider['walltime'],
+                scheduler_options = self.provider['scheduler_options'],
+                regex_job_id = self.provider['regex_job_id'],
+                worker_init = self.provider['worker_init'],
+                exclusive = self.provider['exclusive'],
+                move_files = self.provider['move_files'],
+                launcher = SrunLauncher(
+                    debug = self.launcher['debug'], 
+                    overrides = self.launcher['overrides']
+                    )
+                )
+            )
+        ]))
+                   
+        srunCommand(self.data['command'], str(self.config)).result()
         parsl.clear()
     
     def _start(self, startTick, startTime):
