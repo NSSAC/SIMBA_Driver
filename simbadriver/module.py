@@ -34,7 +34,7 @@ class Module():
         moduleConfig = {
             'mode': 'start', 
             'targetTick': startTick,
-            'targetTime': startTime.isoformat() + 'Z',
+            'targetTime': startTime.isoformat(),
             'moduleData': self.data['moduleData']
             }
 
@@ -53,11 +53,11 @@ class Module():
         moduleConfig = {
             'mode': 'step', 
             'targetTick': self.__lastRunTick,
-            'targetTime': self.__lastRunTime.isoformat() + 'Z',
+            'targetTime': self.__lastRunTime.isoformat(),
             'currentTick': currentTick,
-            'currentTime': currentTime.isoformat() + 'Z',
+            'currentTime': currentTime.isoformat(),
             'targetTick': currentTick + deltaTick,
-            'targetTime': (currentTime + deltaTime).isoformat() + 'Z',
+            'targetTime': (currentTime + deltaTime).isoformat(),
             'moduleData': self.data['moduleData']
             }
 
@@ -80,7 +80,7 @@ class Module():
         moduleConfig = {
             'mode': 'end', 
             'targetTick': endTick,
-            'targetTime': endTime.isoformat() + 'Z',
+            'targetTime': endTime.isoformat(),
             'moduleData': self.data['moduleData']
             }
 
