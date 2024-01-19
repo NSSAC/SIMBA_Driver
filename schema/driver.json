@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2019-09/schema",
-  "$id": "https://raw.githubusercontent.com/NSSAC/SIMBA_driver/schema/driver.json",
+  "$id": "https://raw.githubusercontent.com/NSSAC/SIMBA_driver/master/schema/driver.json",
   "$vocabulary": {
     "https://json-schema.org/draft/2019-09/meta/applicator": true,
     "https://json-schema.org/draft/2019-09/meta/content": true,

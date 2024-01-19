@@ -6,27 +6,31 @@ from pathlib import Path
 from functools import cmp_to_key
 from simbadriver.parslModule import ParslModule
 
-def scheduleCompare(A, B):
-    if A["tick"] != B["tick"]:
-        return A["tick"] - B["tick"]
-    
-    delta = B["priority"] - A["priority"]
-    
-    return -1 if delta < 0 else 1 if delta > 0 else 0
 
 class Scheduler:
+    @staticmethod
+    def compare(A, B):
+        if A["tick"] != B["tick"]:
+            return A["tick"] - B["tick"]
+        
+        delta = B["priority"] - A["priority"]
+        
+        return -1 if delta < 0 else 1 if delta > 0 else 0
     
     def __init__(self, SIMBA):
         self.SIMBA = SIMBA
 
         self.schema = self.SIMBA.getConfiguration().loadJsonFile(SIMBA.getInstallDir().joinpath("schema", "schedule.json"))
         self.data = self.SIMBA.getConfiguration().loadJsonFile("schedule.json", self.schema)
-        
+
+        self.commonData = None
+        if 'commonData' in self.data:
+            self.commonData = self.data['commonData']
+            
         self.schedule = list()
-        
         priorities = set()
         
-        for item in self.data:
+        for item in self.data['schedule']:
             item['index'] = len(priorities) + 1
             self.__addModule(item)
             
@@ -51,7 +55,7 @@ class Scheduler:
         if not os.path.exists('start'):
             os.mkdir('start')
         
-        for item in self.data:
+        for item in self.data['schedule']:
             success &= item["instance"].start(startTick, startTime)
             
             if not success:
@@ -60,10 +64,10 @@ class Scheduler:
         if not success:
             sys.exit("ERROR: Module '" + item["name"] + "' failed to start.")
             
-        for item in self.data:
+        for item in self.data['schedule']:
             self.schedule.append({"tick" : item["startTick"], "priority" : item["priority"], "moduleData" : item})
 
-        self.schedule.sort(key=cmp_to_key(scheduleCompare))
+        self.schedule.sort(key=cmp_to_key(Scheduler.compare))
          
         return success
         
@@ -104,7 +108,7 @@ class Scheduler:
         for item in toBeRemoved:
             self.schedule.remove(item)
         
-        self.schedule.sort(key=cmp_to_key(scheduleCompare))
+        self.schedule.sort(key=cmp_to_key(Scheduler.compare))
         
         return success
         
@@ -114,7 +118,7 @@ class Scheduler:
         if not os.path.exists('end'):
             os.mkdir('end')
         
-        for item in self.data:
+        for item in self.data['schedule']:
             try:
                 success &= item["instance"].end(self.currentTick, self.currentTime)
                 
@@ -137,7 +141,7 @@ class Scheduler:
         if not module['type'] in [ 'parsl' ]:
             sys.exit("ERROR: Module '" + module["type"] + "' is not supported.")
 
-        module['instance'] = ParslModule(self.SIMBA, module)
+        module['instance'] = ParslModule(self.SIMBA, self, module)
 
         if not isinstance(module["priority"], numbers.Real):
             if module["priority"] == "-Infinity":
@@ -158,3 +162,21 @@ class Scheduler:
             sys.exit("ERROR: Module '" + module["name"] + "' invalid endTick = '" + str(module["endTick"]) + "'.")
             
         return True
+
+    def initConfigData(self):
+        config = {
+            '$schema': 'https://raw.githubusercontent.com/NSSAC/SIMBA_driver/master/schema/module.json'
+            }
+        
+        if self.commonData != None:
+            config['commonData'] = self.commonData
+
+        return config
+    
+    def updateCommonData(self, commonData):
+        if self.commonData == None:
+            return
+        
+        for key in self.commonData:
+            if key in commonData:
+                self.commonData[key] = commonData[key]

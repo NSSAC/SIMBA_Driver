@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2019-09/schema",
-  "$id": "https://raw.githubusercontent.com/NSSAC/SIMBA_driver/schema/module.json",
+  "$id": "https://raw.githubusercontent.com/NSSAC/SIMBA_driver/master/schema/module.json",
   "$vocabulary": {
     "https://json-schema.org/draft/2019-09/meta/applicator": true,
     "https://json-schema.org/draft/2019-09/meta/content": true,
@@ -63,6 +63,11 @@
       "description": "The target date time in ISO format (not provided for mode: end).",
       "type": "string",
       "format": "date-time"
+    },
+    "commonData": {
+      "title": "Common Data",
+      "description": "Common data provided to all modules upon execution.",
+      "type": "object"
     },
     "moduleData": {
       "title": "Module specific Data",

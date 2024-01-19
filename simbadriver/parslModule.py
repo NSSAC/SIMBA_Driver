@@ -2,6 +2,7 @@ from parsl.config import Config
 from parsl.launchers import SrunLauncher
 from parsl.channels import LocalChannel
 from parsl.providers import SlurmProvider
+from parsl.providers import LocalProvider
 from parsl.executors import HighThroughputExecutor
 from parsl.addresses import address_by_hostname
 from parsl.data_provider.globus import GlobusStaging
@@ -210,7 +211,7 @@ class ParslModule(Module):
             )
         ]))
                    
-        srunCommand(self.data['command'], str(self.config)).result()
+        srunCommand(self.command, str(self.config)).result()
         parsl.clear()
     
     def _start(self, startTick, startTime):

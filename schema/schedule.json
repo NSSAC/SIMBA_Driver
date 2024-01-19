@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2019-09/schema",
-  "$id": "https://raw.githubusercontent.com/NSSAC/SIMBA_driver/schema/schedule.json",
+  "$id": "https://raw.githubusercontent.com/NSSAC/SIMBA_driver/master/schema/schedule.json",
   "$vocabulary": {
     "https://json-schema.org/draft/2019-09/meta/applicator": true,
     "https://json-schema.org/draft/2019-09/meta/content": true,
@@ -21,6 +21,12 @@
       "multipleof": 1
     },
     "integerTuple": {
+      "$id": "integerTuple",
+      "title": "Integer Tuple",
+      "$$target": [
+        "#/definitions/integerTuple"
+      ],
+      "description": "A tuple of 2 integers",
       "type": "array",
       "items": {
         "$ref": "#/definitions/integer"
@@ -434,6 +440,12 @@
               "description": "The command to execute the module.",
               "type": "string"
             },
+            "updateCommonData": {
+              "title": "Update Common Data",
+              "description": "Specifies whether this module may update common data.",
+              "type": "boolean",
+              "default": false
+            },
             "moduleData": {
               "title": "Module specific Data",
               "description": "Module specific data provided to the module upon execution.",
@@ -490,15 +502,28 @@
   },
   "title": "SIMBA Scheduler",
   "description": "The schema describes which and how modules are executed during each tick of the driver.",
-  "type": "array",
-  "items": {
-    "allOf": [
-      {
-        "$ref": "#/definitions/schedule"
-      },
-      {
-        "$ref": "#/definitions/module"
+  "type": "object",
+  "required": [
+    "schedule"
+  ],
+  "properties": {
+    "schedule": {
+      "type": "array",
+      "items": {
+        "allOf": [
+          {
+            "$ref": "#/definitions/schedule"
+          },
+          {
+            "$ref": "#/definitions/module"
+          }
+        ]
       }
-    ]
+    },
+    "commonData": {
+      "title": "Common Data",
+      "description": "Common data provided to all modules upon execution.",
+      "type": "object"
+    }
   }
 }
