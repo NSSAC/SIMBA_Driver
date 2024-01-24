@@ -33,23 +33,27 @@ class Module():
         return False
     
     def start(self, startTick, startTime):
+        mode = 'start'
+        self.config = str(Path.cwd().joinpath(mode, 'module_{}.json'.format(self.index)))
+        self.status = str(Path.cwd().joinpath(mode, 'status_{}.json'.format(self.index)))
+        
         self.__lastRunTick = startTick
         self.__lastRunTime = startTime
-        self.config = Path.cwd().joinpath('start', 'module_' + str(self.index) + '.json')
-        
         
         moduleConfig = self.scheduler.initConfigData()
         moduleConfig['mode'] = 'start'
-        moduleConfig['targetTick'] = startTick
-        moduleConfig['targetTime'] = startTime.isoformat()
+        moduleConfig['statusFile'] = self.status
+        moduleConfig['currentTick'] = startTick
+        moduleConfig['currentTime'] = startTime.isoformat()
         
         if self.moduleData != None:
             moduleConfig['moduleData'] = self.moduleData
 
         self.SIMBA.getConfiguration().writeJsonFile(self.config, moduleConfig)
         success = self._start(startTick, startTime)
+        
         if success:
-            self.updateData()
+            success &= self.readStatus()
         
         return success
         
@@ -58,11 +62,15 @@ class Module():
         return False
         
     def step(self, currentTick, currentTime, deltaTick, deltaTime, skipExecution):
+        mode = self.SIMBA.formatTick(currentTick)
+        self.config = str(Path.cwd().joinpath(mode, 'module_{}.json'.format(self.index)))
+        self.status = str(Path.cwd().joinpath(mode, 'status_{}.json'.format(self.index)))
+
         success = True
-        self.config = Path.cwd().joinpath(str(currentTick), 'module_' + str(self.index) + '.json')
-        
+    
         moduleConfig = self.scheduler.initConfigData()
         moduleConfig['mode'] = 'step'
+        moduleConfig['statusFile'] = self.status
         moduleConfig['lastRunTick'] = self.__lastRunTick
         moduleConfig['lastRunTime'] = self.__lastRunTime.isoformat()
         moduleConfig['currentTick'] = currentTick
@@ -77,8 +85,9 @@ class Module():
         
         if not skipExecution:
             success = self._step(self.__lastRunTick, self.__lastRunTime, currentTick, currentTime, currentTick + deltaTick, currentTime + deltaTime)
+
             if success:
-                self.updateData()
+                success &= self.readStatus()
         
         self.__lastRunTick = currentTick
         self.__lastRunTime = currentTime
@@ -90,12 +99,17 @@ class Module():
         return False
         
     def end(self, endTick, endTime):
-        self.config = Path.cwd().joinpath('end', 'module_' + str(self.index) + '.json')
-        
+        mode = 'end'
+        self.config = str(Path.cwd().joinpath(mode, 'module_{}.json'.format(self.index)))
+        self.status = str(Path.cwd().joinpath(mode, 'status_{}.json'.format(self.index)))
+ 
         moduleConfig = self.scheduler.initConfigData()
-        moduleConfig['mode'] = 'end'
-        moduleConfig['targetTick'] = endTick
-        moduleConfig['targetTime'] = endTime.isoformat()
+        moduleConfig['mode'] = mode
+        moduleConfig['statusFile'] = self.status
+        moduleConfig['lastRunTick'] = self.__lastRunTick
+        moduleConfig['lastRunTime'] = self.__lastRunTime.isoformat()
+        moduleConfig['currentTick'] = endTick
+        moduleConfig['currentTime'] = endTime.isoformat()
         
         if self.moduleData != None:
             moduleConfig['moduleData'] = self.moduleData
@@ -105,7 +119,7 @@ class Module():
         success = self._end(self.__lastRunTick, self.__lastRunTime, endTick, endTime)
         
         if success:
-            self.updateData()
+            success &= self.readStatus()
 
         self.__lastRunTick = None
         self.__lastRunTime = None
@@ -116,11 +130,16 @@ class Module():
     def _end(self, lastRunTick, lastRunTime, endTick, endTime):
         return False
 
-    def updateData(self):
-        config = self.SIMBA.getConfiguration().loadJsonFile(self.config)
+    def readStatus(self):
+        if not Path(self.status).exists():
+            return False
         
-        if 'moduleData' in config:
-            self.moduleData = config['moduleData']
+        status = self.SIMBA.getConfiguration().loadJsonFile(self.status)
+        
+        if 'moduleData' in status:
+            self.moduleData = status['moduleData']
             
-        if self.updateCommonData and 'commonData' in config:
-            self.scheduler.updateCommonData(config['commonData'])
+        if self.updateCommonData and 'commonData' in status:
+            self.scheduler.updateCommonData(status['commonData'])
+            
+        return status['status'] == 'success'

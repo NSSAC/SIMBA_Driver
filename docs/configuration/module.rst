@@ -20,7 +20,7 @@ Introduction
 
 The :doc:`driver` calls each module at the ``start`` and ``end`` of the simulation as well as for each ``step``, for which the module is scheduled. A module is expected to be an executable callable from the command line. The module is called with just one positional argument, which is the path to a JSON formatted config file. Each module is expected provide a :ref:`module-status` file returning the modules success state. It may also provide information back to the driver. This information comprises module specific data and common data. The later is shared with all modules but only trusted modules may update it. The returned information must be provided in a JSON files alongside the config file.
 
-.. |simba-module-specification-synopsis| replace:: Specification: run time configuration file for a module. 
+.. |simba-module-specification-synopsis| replace:: Specification: The API for a modules comprising configuration and return status. 
 .. _`simba-module-specification-synopsis`: `simba-module-specification`_
 
 .. _simba-module-specification:
@@ -32,7 +32,7 @@ Specification
 
    |simba-module-specification-synopsis|
 
-The JSON configuration file may contain 3 sections, which are: :ref:`driver-provided-data`, :ref:`common-data`, and :ref:`module-specific-data`.  In case the module updates common or module specific data this must be done in a file alongside the configuration file, i.e., in the same directory. The file should contain the JSON objects ``commonData``, ``moduleData``, or both. The file must be named:
+The API for a SIMBA module comprises two files the configuration and return status files. The JSON configuration file may contain 3 sections, which are: :ref:`driver-provided-data`, :ref:`common-data`, and :ref:`module-specific-data`.  In case the module updates common or module specific data this must be done in a file alongside the configuration file, i.e., in the same directory. The file should contain the JSON objects ``commonData``, ``moduleData``, or both. The file must be named:
 
 .. code-block:: bash 
 

@@ -5,7 +5,8 @@ import numbers
 from pathlib import Path
 from functools import cmp_to_key
 from simbadriver.parslModule import ParslModule
-
+from numpy import log10
+from math import ceil
 
 class Scheduler:
     @staticmethod
@@ -30,8 +31,10 @@ class Scheduler:
         self.schedule = list()
         priorities = set()
         
+        index = '{{:0{}d}}'.format(ceil(log10(len(self.data['schedule']))))
+        
         for item in self.data['schedule']:
-            item['index'] = len(priorities) + 1
+            item['index'] = index.format(len(priorities) + 1)
             self.__addModule(item)
             
             """ Priorities must be unique """
@@ -77,8 +80,8 @@ class Scheduler:
         startTick = self.currentTick
         
         while self.currentTick < endTick:
-            if not os.path.exists(str(self.currentTick)):
-                os.mkdir(str(self.currentTick))
+            if not os.path.exists(self.SIMBA.formatTick(self.currentTick)):
+                os.mkdir(self.SIMBA.formatTick(self.currentTick))
         
             success &= self.__internalStep(deltaTime, self.currentTick < continueFromTick)
             self.currentTick += 1

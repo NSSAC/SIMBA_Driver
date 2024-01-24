@@ -7,6 +7,8 @@ from numpy import inf
 import os, logging, math
 from datetime import datetime
 from datetime import timedelta
+from numpy import log10
+from math import ceil
 
 class SIMBA:
     def __init__(self, configurationDirectory):
@@ -86,7 +88,9 @@ class SIMBA:
                 
             currentTime = maxTime
             currentTick += item["endTick"] - item["startTick"] + 1
-                 
+
+        self.tick = '{{:0{}d}}'.format(ceil(log10(currentTick)))
+                         
         for item in ToBeRemoved:
             self.data["scheduleIntervals"].remove(item)
             
@@ -131,3 +135,6 @@ class SIMBA:
     
     def getPwd(self):
         return self.pwd
+
+    def formatTick(self, tick):
+        return self.tick.format(tick)
