@@ -1,5 +1,5 @@
-Module Schema
-=============
+Module Config Schema
+====================
 
 .. jsonschema:: ../../schema/module.json
 

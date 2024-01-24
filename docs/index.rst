@@ -37,6 +37,7 @@ SIMBA is a framework for performing multi-scale simulations in an HPC environmen
    schema/driver.rst
    schema/schedule.rst
    schema/module.rst
+   schema/status.rst
 
 Indices and tables
 ==================

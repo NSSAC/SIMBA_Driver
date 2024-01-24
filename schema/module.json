@@ -28,6 +28,11 @@
         "end"
       ]
     },
+    "statusFile": {
+      "title": "Status File",
+      "description": "The file in which the return status, updated common, and module data is expected.",
+      "type": "string"
+    },
     "lastExecutedTick": {
       "title": "Last Executed Tick",
       "description": " The last executed tick (not provided for mode: start).",
@@ -54,13 +59,13 @@
     },
     "targetTick": {
       "title": "Target Tick",
-      "description": "The target tick (not provided for mode: end).",
+      "description": "The target tick (not provided for modes: start, end).",
       "type": "number",
       "multipleOf": 1
     },
     "targetTime": {
       "title": "Target Date Time",
-      "description": "The target date time in ISO format (not provided for mode: end).",
+      "description": "The target date time in ISO format (not provided for modes: start, end).",
       "type": "string",
       "format": "date-time"
     },
