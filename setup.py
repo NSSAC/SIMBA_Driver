@@ -27,6 +27,7 @@ setuptools.setup(name='simbaDriver',
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(),
+    include_package_data=True,
     scripts=["bin/SIMBA.py"],
     install_requires=[
         'jsonschema',

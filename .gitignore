@@ -15,3 +15,5 @@ example/run/
 run/
 
 simbaDriver.egg-info/
+
+dist/
