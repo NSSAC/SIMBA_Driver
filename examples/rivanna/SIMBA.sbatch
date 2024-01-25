@@ -9,4 +9,4 @@
 #SBATCH --tasks-per-node 1
 
 export PYTHONPATH=${SIMBA_PATH}:${PYTHONPATH}
-${SIMBA_PATH}/SIMBA.py ${SIMBA_PATH}/example/rivanna
+${SIMBA_PATH}/bin/SIMBA.py ${SIMBA_PATH}/example/rivanna
