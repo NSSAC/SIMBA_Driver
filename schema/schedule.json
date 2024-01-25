@@ -225,11 +225,11 @@
         "type"
       ]
     },
-    "provider": {
-      "$id": "provider",
-      "title": "Provider",
+    "slurmProvider": {
+      "$id": "slurmProvider",
+      "title": "Slurm Provider",
       "$$target": [
-        "#/definitions/provider"
+        "#/definitions/slurmProvider"
       ],
       "type": "object",
       "properties": {
@@ -325,11 +325,84 @@
         "type"
       ]
     },
-    "launcher": {
-      "$id": "launcher",
-      "title": "Launcher",
+    "localProvider": {
+      "$id": "localProvider",
+      "title": "Local Provider",
       "$$target": [
-        "#/definitions/launcher"
+        "#/definitions/localProvider"
+      ],
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "Slurm Provider: https://parsl.readthedocs.io/en/stable/stubs/parsl.providers.SlurmProvider.html#parsl.providers.LocalProvider",
+          "const": "LocalProvider"
+        },
+        "channel": {
+          "$ref": "#/definitions/channel",
+          "description": "Channel for accessing this provider. Possible channels include LocalChannel (the default), SSHChannel, or SSHInteractiveLoginChannel."
+        },
+        "nodes_per_block": {
+          "$ref": "#/definitions/integer",
+          "description": "Nodes to provision per block."
+        },
+        "init_blocks": {
+          "$ref": "#/definitions/integer",
+          "description": "Initial number of blocks.",
+          "default": 1
+        },
+        "min_blocks": {
+          "$ref": "#/definitions/integer",
+          "description": "Minimum number of blocks to maintain.",
+          "default": 0
+        },
+        "max_blocks": {
+          "$ref": "#/definitions/integer",
+          "description": "Maximum number of blocks to maintain.",
+          "default": 1
+        },
+        "parallelism": {
+          "type": "number",
+          "description": "Ratio of provisioned task slots to active tasks. A parallelism value of 1 represents aggressive scaling where as many resources as possible are used; parallelism close to 0 represents the opposite situation in which as few resources as possible (i.e., min_blocks) are used."
+        },
+        "worker_init": {
+          "type": "string",
+          "description": "Command to be run before starting a worker, such as ‘module load Anaconda; source activate env’."
+        },
+        "move_files": {
+          "type": "boolean",
+          "default": true,
+          "description": "should files be moved? by default, Parsl will try to move files.)"
+        },
+        "launcher": {
+          "$ref": "#/definitions/singleNodeLauncher",
+          "description": "Launcher for this provider. Possible launchers include SingleNodeLauncher"
+        }
+      },
+      "required": [
+        "type"
+      ]
+    },
+    "provider": {
+      "$id": "provider",
+      "title": "Provider",
+      "$$target": [
+        "#/definitions/provider"
+      ],
+      "description": "Provider: https://parsl.readthedocs.io/en/stable/reference.html#providers",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/slurmProvider"
+        },
+        {
+          "$ref": "#/definitions/localProvider"
+        }
+      ]
+    },
+    "srunLauncher": {
+      "$id": "srunLauncher",
+      "title": "Srun Launcher",
+      "$$target": [
+        "#/definitions/srunLauncher"
       ],
       "type": "object",
       "properties": {
@@ -344,11 +417,52 @@
         "overrides": {
           "description": "This string will be passed to the srun launcher. Default: ''",
           "type": "string",
-          "default": ": {"
+          "default": ""
         }
       },
       "required": [
         "type"
+      ]
+    },
+    "singleNodeLauncher": {
+      "$id": "singleNodeLauncher",
+      "title": "Single Node Launcher",
+      "$$target": [
+        "#/definitions/singleNodeLauncher"
+      ],
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "Single Node Launcher Launcher: https://parsl.readthedocs.io/en/stable/stubs/parsl.launchers.SingleNodeLauncher.html#parsl.launchers.SingleNodeLauncher",
+          "const": "SingleNodeLauncher"
+        },
+        "debug": {
+          "type": "boolean",
+          "default": true
+        },
+        "fail_on_any": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "required": [
+        "type"
+      ]
+    },
+    "launcher": {
+      "$id": "launcher",
+      "title": "Launcher",
+      "$$target": [
+        "#/definitions/launcher"
+      ],
+      "description": "Provider: https://parsl.readthedocs.io/en/stable/reference.html#launchers",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/srunLauncher"
+        },
+        {
+          "$ref": "#/definitions/singleNodeLauncher"
+        }
       ]
     },
     "channel": {

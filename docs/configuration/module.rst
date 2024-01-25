@@ -32,11 +32,7 @@ Specification
 
    |simba-module-specification-synopsis|
 
-The API for a SIMBA module comprises two files the configuration and return status files. The JSON configuration file may contain 3 sections, which are: :ref:`driver-provided-data`, :ref:`common-data`, and :ref:`module-specific-data`.  In case the module updates common or module specific data this must be done in a file alongside the configuration file, i.e., in the same directory. The file should contain the JSON objects ``commonData``, ``moduleData``, or both. The file must be named:
-
-.. code-block:: bash 
-
-   updateFileName=$(basename configurationFile .json)-update.json
+The API for a SIMBA module comprises two files the configuration and return status files. The JSON configuration file may contain 3 sections, which are: :ref:`driver-provided-data`, :ref:`common-data`, and :ref:`module-specific-data`.  In case the module updates common or module specific data this must be done in a file alongside the configuration file, i.e., in the same directory. The file should contain the JSON objects ``commonData``, ``moduleData``, or both. 
 
 .. _driver-provided-data:
 
@@ -138,6 +134,10 @@ Common Data
 
 Common data, e.g., database connection information is provided to all modules. Since the host on which the database may not be know before the start of the driver it is necessary that the module providing the database returns the information to the driver and all modules. The attributes of the common data or provided as part of the :doc:`schedule`. No further information will be made available the modules.
 
+.. list-table:: Module Common Data. 
+  :name: module-common-data
+  :header-rows: 1
+
   * - | Name
     - | Type 
     - | Description
@@ -169,6 +169,10 @@ Module Specific Data
 
 A module may require additional configuration options beyond the driver provided information and common data. The module specific data object is providing the means to define and modify it.
 
+.. list-table:: Module Specific Data. 
+  :name: table-module-specific-data
+  :header-rows: 1
+
   * - | Name
     - | Type 
     - | Description
@@ -182,6 +186,10 @@ Module Status
 .............
 
 As a minimum the status file contains the return status: ``success`` or ``fail``. In case the module updates common or module specific data the file should also contain the JSON objects ``commonData``, ``moduleData``, or both. The normative JSON schema can be found at:  :doc:`Module Status Schema </schema/status>` 
+
+.. list-table:: Module Status. 
+  :name: table-module-status
+  :header-rows: 1
 
   * - | Name
     - | Type 

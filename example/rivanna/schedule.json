@@ -3,7 +3,7 @@
   "schedule": [
     {
       "name": "SlurmModule1",
-      "command": "bin/application.sh",
+      "command": "../bin/application.sh",
       "priority": "Infinity",
       "updateCommonData": true,
       "startTick": 0,
@@ -29,7 +29,7 @@
     },
     {
       "name": "SlurmModule2",
-      "command": "bin/application.sh",
+      "command": "../bin/application.sh",
       "priority": 10,
       "startTick": 0,
       "tickIncrement": 2,
