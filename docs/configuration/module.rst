@@ -208,3 +208,5 @@ As a minimum the status file contains the return status: ``success`` or ``fail``
 
 Examples
 --------
+
+Please see :doc:`Examples </examples/example>` 

@@ -14,7 +14,7 @@
       "type": "parsl",
       "executor": {
         "type": "HighThroughputExecutor",
-        "label": "rivanna"
+        "label": "slurm"
       },
       "provider": {
         "type": "SlurmProvider",
@@ -36,7 +36,7 @@
       "type": "parsl",
       "executor": {
         "type": "HighThroughputExecutor",
-        "label": "rivanna"
+        "label": "slurm"
       },
       "provider": {
         "type": "SlurmProvider",

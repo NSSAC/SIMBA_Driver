@@ -1,4 +1,4 @@
 include schema/*.json
 include examples/bin/*
 include examples/local/*
-include examples/rivanna/*
+include examples/slurm/*

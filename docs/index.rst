@@ -16,6 +16,7 @@ SIMBA is a framework for performing multi-scale simulations in an HPC environmen
    :maxdepth: 2
    :caption: Getting started
 
+   quickstart/get-started.rst
 
 .. toctree::
    :maxdepth: 2
