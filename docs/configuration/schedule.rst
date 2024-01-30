@@ -18,7 +18,7 @@ Introduction
 
    |simba-schedule-introduction-synopsis|
 
-The SIMBA schedule configuration specifies the schedule of each module
+The SIMBA schedule configuration specifies the schedule of each module. Naturally, at least one module must be specified.
 
 .. |simba-schedule-specification-synopsis| replace:: Specification: how to specify module schedules. 
 .. _`simba-schedule-specification-synopsis`: `simba-schedule-specification`_
@@ -39,3 +39,4 @@ The normative JSON schema can be found at:  :doc:`Schedule Schema </schema/sched
 Examples
 --------
 
+Please see :doc:`Examples </examples/example>` 

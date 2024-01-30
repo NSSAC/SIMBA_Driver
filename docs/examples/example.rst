@@ -2,7 +2,7 @@ Examples
 ========
 
 Before running either of the examples you will have to install :doc:`SIMBA </quickstart/get-started>`.
-Both example use a simple ``bash`` script to demonstrate the functionality.
+Both examples use a simple ``bash`` script to demonstrate the functionality.
 
 **application.sh**:
 

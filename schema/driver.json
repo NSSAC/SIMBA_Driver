@@ -18,7 +18,7 @@
       "type": "string"
     },
     "cellId": {
-      "title": "A unique ID identifying the currently running experimental setup",
+      "title": "An ID identifying the currently running experimental setup",
       "type": "string"
     },
     "initialTick": {
@@ -77,7 +77,8 @@
         "required": [
           "tickDuration"
         ]
-      }
+      },
+      "minItems": 1
     }
   },
   "required": [

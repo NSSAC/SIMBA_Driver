@@ -10,7 +10,7 @@ Welcome to SIMBA's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-SIMBA is a framework for performing multi-scale simulations in an HPC environment. Each simulation step can involve multiple modules which update the current state of the system. The order and the frequency in which these modules are executed is handled by a flexible [scheduler](Scheduler). The current system state and a full history is stored in a database.
+SIMBA is a framework for performing multi-scale simulations in an HPC environment. Each simulation step can involve multiple modules which update the current state of the system. The order and the frequency in which these modules are executed is handled by a flexible [scheduler](Scheduler).
 
 .. toctree::
    :maxdepth: 2

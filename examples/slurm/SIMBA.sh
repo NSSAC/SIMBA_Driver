@@ -14,5 +14,5 @@
 
 # set -o xtrace
 
-export SIMBA_PATH=$(realpath $(dirname $(dirname $(dirname $0))))
+export SIMBA_PATH=$(dirname $(dirname $(dirname $(realpath $0))))
 sbatch $(dirname $0)/SIMBA.sbatch
