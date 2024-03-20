@@ -10,6 +10,8 @@
 #   http://www.apache.org/licenses/LICENSE-2.0 
 # END: License 
 
+from pathlib import Path
+
 from parsl.config import Config
 from parsl.launchers import SingleNodeLauncher
 from parsl.launchers import SrunLauncher
@@ -223,7 +225,7 @@ class ParslModule(Module):
 
         return
 
-    def execute(self):
+    def execute(self, stdout, stderr):
         
         parsl.load(Config(executors = [
             self.executor(
@@ -236,19 +238,31 @@ class ParslModule(Module):
                     )
                 )
             ]))
-                   
-        srunCommand(self.command, str(self.config)).result()
+
+        srunCommand(self.command, str(self.config), stdout = stdout, stderr = stderr).result()
         parsl.clear()
     
     def _start(self, startTick, startTime):
-        self.execute()
+        mode = 'start'
+        stdout = str(Path.cwd().joinpath(mode, 'stdout_{}'.format(self.index)))
+        stderr = str(Path.cwd().joinpath(mode, 'stderr_{}'.format(self.index)))
+                   
+        self.execute(stdout, stderr)
         return True
 
         
     def _step(self, lastRunTick, lastRunTime, currentTick, currentTime, targetTick, targetTime):
-        self.execute()
+        mode = self.SIMBA.formatTick(currentTick)
+        stdout = str(Path.cwd().joinpath(mode, 'stdout_{}'.format(self.index)))
+        stderr = str(Path.cwd().joinpath(mode, 'stderr_{}'.format(self.index)))
+                   
+        self.execute(stdout, stderr)
         return True
         
     def _end(self, lastRunTick, lastRunTime, endTick, endTime):
-        self.execute()
+        mode = 'end'
+        stdout = str(Path.cwd().joinpath(mode, 'stdout_{}'.format(self.index)))
+        stderr = str(Path.cwd().joinpath(mode, 'stderr_{}'.format(self.index)))
+                   
+        self.execute(stdout, stderr)
         return True
