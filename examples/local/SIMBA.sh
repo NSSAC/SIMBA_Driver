@@ -12,9 +12,9 @@
 #   http://www.apache.org/licenses/LICENSE-2.0 
 # END: License 
 
-# set -o xtrace
+set -o xtrace
 
 SIMBA_PATH=$(dirname $(dirname $(dirname $(realpath $0))))
 
 export PYTHONPATH=${SIMBA_PATH}:${PYTHONPATH}
-${SIMBA_PATH}/bin/SIMBA.py ${SIMBA_PATH}/example/local
+${SIMBA_PATH}/bin/SIMBA.py ${SIMBA_PATH}/examples/local

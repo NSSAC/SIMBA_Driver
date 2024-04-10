@@ -34,7 +34,7 @@ class Scheduler:
         self.SIMBA = SIMBA
 
         self.schema = self.SIMBA.getConfiguration().loadJsonFile(SIMBA.getInstallDir().joinpath("schema", "schedule.json"))
-        self.data = self.SIMBA.getConfiguration().loadJsonFile("schedule.json", self.schema)
+        self.data = self.SIMBA.getConfiguration().loadJsonFile("schedule.json")
 
         self.commonData = None
         if 'commonData' in self.data:
@@ -80,7 +80,7 @@ class Scheduler:
             sys.exit("ERROR: Module '" + item["name"] + "' failed to start.")
             
         for item in self.data['schedule']:
-            self.schedule.append({"tick" : item["startTick"], "priority" : item["priority"], "moduleData" : item})
+            self.schedule.append({"tick" : max(startTick, item["startTick"]), "priority" : item["priority"], "moduleData" : item})
 
         self.schedule.sort(key=cmp_to_key(Scheduler.compare))
          
