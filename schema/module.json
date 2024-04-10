@@ -15,7 +15,8 @@
   "required": [
     "mode",
     "currentTick",
-    "currentTime"
+    "currentTime",
+    "tickFormat"
   ],
   "properties": {
     "mode": {
@@ -66,6 +67,12 @@
     "targetTime": {
       "title": "Target Date Time",
       "description": "The target date time in ISO format (not provided for modes: start, end).",
+      "type": "string",
+      "format": "date-time"
+    },
+    "tickFormat": {
+      "title": "Format tick to string.",
+      "description": "A Python The target date time in ISO format (not provided for modes: start, end).",
       "type": "string",
       "format": "date-time"
     },

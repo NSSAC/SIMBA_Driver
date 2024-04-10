@@ -57,6 +57,7 @@ class Module():
         moduleConfig['statusFile'] = self.status
         moduleConfig['currentTick'] = startTick
         moduleConfig['currentTime'] = startTime.isoformat()
+        moduleConfig['tickFormat'] = self.SIMBA.tick
         
         if self.moduleData != None:
             moduleConfig['moduleData'] = self.moduleData
@@ -89,6 +90,7 @@ class Module():
         moduleConfig['currentTime'] = currentTime.isoformat()
         moduleConfig['targetTick'] = currentTick + deltaTick
         moduleConfig['targetTime'] = (currentTime + deltaTime).isoformat()
+        moduleConfig['tickFormat'] = self.SIMBA.tick
         
         if self.moduleData != None:
             moduleConfig['moduleData'] = self.moduleData
@@ -122,6 +124,7 @@ class Module():
         moduleConfig['lastRunTime'] = self.__lastRunTime.isoformat()
         moduleConfig['currentTick'] = endTick
         moduleConfig['currentTime'] = endTime.isoformat()
+        moduleConfig['tickFormat'] = self.SIMBA.tick
         
         if self.moduleData != None:
             moduleConfig['moduleData'] = self.moduleData
