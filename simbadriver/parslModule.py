@@ -226,20 +226,21 @@ class ParslModule(Module):
         return
 
     def execute(self, stdout, stderr):
-        
-        parsl.load(Config(executors = [
-            self.executor(
-                **self.executorData,
-                provider =  self.provider(
-                    **self.providerData, 
-                    launcher = self.launcher(
-                        **self.launcherData
-                        )
+        executor = self.executor(
+            **self.executorData,
+            provider =  self.provider(
+                **self.providerData, 
+                launcher = self.launcher(
+                    **self.launcherData
                     )
                 )
-            ]))
+            )
+
+        parsl.load(Config(executors = [executor]))
 
         srunCommand(self.command, str(self.config), stdout = stdout, stderr = stderr).result()
+
+        executor.shutdown()
         parsl.clear()
     
     def _start(self, startTick, startTime):
