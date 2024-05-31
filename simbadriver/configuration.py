@@ -30,15 +30,15 @@ class Configuration:
         
         dictionary = json.load(jsonFile)
         
-        if schema != None:
-            validate(dictionary, schema)
+        # if schema != None:
+        #     validate(dictionary, schema)
             
         jsonFile.close()
         return dictionary
 
     def writeJsonFile(self, fileName, dictionary, schema = None):
-        if schema != None:
-            validate(dictionary, schema)
+        # if schema != None:
+        #     validate(dictionary, schema)
 
         file = open(fileName, 'w')            
         json.dump(dictionary, file, indent=2)
