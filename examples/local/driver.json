@@ -1,6 +1,6 @@
 {
     "$schema": "https://raw.githubusercontent.com/NSSAC/SIMBA_driver/master/schema/driver.json",
-    "initialTime" : "2024-01-01T00:00:00Z",
+    "initialTime" : "2024-01-01T00:00:00+00:00",
     "endTime" : "2024-01-01T03:30:00+00:00",
     "scheduleIntervals" : [
       {
