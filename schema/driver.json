@@ -13,6 +13,11 @@
   "description": "The schema describes how the SIMBA driver is executed",
   "type": "object",
   "properties": {
+    "outputDirectory": {
+      "title": "Output Directory",
+      "description": "The directory where all output files (e.g. status files) are stored",
+      "type": "string"
+    },
     "runId": {
       "title": "A unique ID identifying the run to be executed",
       "type": "string"

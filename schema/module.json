@@ -16,7 +16,8 @@
     "mode",
     "currentTick",
     "currentTime",
-    "tickFormat"
+    "tickFormat",
+    "outputDirectory"
   ],
   "properties": {
     "mode": {
@@ -28,6 +29,11 @@
         "step",
         "end"
       ]
+    },
+    "outputDirectory": {
+      "title": "Output Directory",
+      "description": "The base output directory",
+      "type": "string"
     },
     "statusFile": {
       "title": "Status File",

@@ -44,10 +44,9 @@ class Module():
     def _init(self, data):
         return False
     
-    def start(self, startTick, startTime):
-        mode = 'start'
-        self.config = str(Path.cwd().joinpath(mode, 'module_{}.json'.format(self.index)))
-        self.status = str(Path.cwd().joinpath(mode, 'status_{}.json'.format(self.index)))
+    def start(self, currentDirectory, startTick, startTime):
+        self.config = str(currentDirectory.joinpath('module_{}.json'.format(self.index)))
+        self.status = str(currentDirectory.joinpath('status_{}.json'.format(self.index)))
         
         self.__lastRunTick = startTick
         self.__lastRunTime = startTime
@@ -63,7 +62,7 @@ class Module():
             moduleConfig['moduleData'] = self.moduleData
 
         self.SIMBA.getConfiguration().writeJsonFile(self.config, moduleConfig)
-        success = self._start(startTick, startTime)
+        success = self._start(currentDirectory, startTick, startTime)
         
         if success:
             success &= self.readStatus()
@@ -71,13 +70,12 @@ class Module():
         return success
         
     @abstractmethod   
-    def _start(self, startTick, startTime):
+    def _start(self, currentDirectory, startTick, startTime):
         return False
         
-    def step(self, currentTick, currentTime, deltaTick, deltaTime, skipExecution):
-        mode = self.SIMBA.formatTick(currentTick)
-        self.config = str(Path.cwd().joinpath(mode, 'module_{}.json'.format(self.index)))
-        self.status = str(Path.cwd().joinpath(mode, 'status_{}.json'.format(self.index)))
+    def step(self, currentDirectory, currentTick, currentTime, deltaTick, deltaTime, skipExecution):
+        self.config = str(currentDirectory.joinpath('module_{}.json'.format(self.index)))
+        self.status = str(currentDirectory.joinpath('status_{}.json'.format(self.index)))
 
         success = True
     
@@ -98,7 +96,7 @@ class Module():
         self.SIMBA.getConfiguration().writeJsonFile(self.config, moduleConfig)
         
         if not skipExecution:
-            success = self._step(self.__lastRunTick, self.__lastRunTime, currentTick, currentTime, currentTick + deltaTick, currentTime + deltaTime)
+            success = self._step(currentDirectory, self.__lastRunTick, self.__lastRunTime, currentTick, currentTime, currentTick + deltaTick, currentTime + deltaTime)
 
             if success:
                 success &= self.readStatus()
@@ -109,16 +107,15 @@ class Module():
         return success 
 
     @abstractmethod   
-    def _step(self, lastRunTick, lastRunTime, currentTick, currentTime, targetTick, targetTime):
+    def _step(self, currentDirectory, lastRunTick, lastRunTime, currentTick, currentTime, targetTick, targetTime):
         return False
         
-    def end(self, endTick, endTime):
-        mode = 'end'
-        self.config = str(Path.cwd().joinpath(mode, 'module_{}.json'.format(self.index)))
-        self.status = str(Path.cwd().joinpath(mode, 'status_{}.json'.format(self.index)))
+    def end(self, currentDirectory, endTick, endTime):
+        self.config = str(currentDirectory.joinpath('module_{}.json'.format(self.index)))
+        self.status = str(currentDirectory.joinpath('status_{}.json'.format(self.index)))
  
         moduleConfig = self.scheduler.initConfigData()
-        moduleConfig['mode'] = mode
+        moduleConfig['mode'] = 'end'
         moduleConfig['statusFile'] = self.status
         moduleConfig['lastRunTick'] = self.__lastRunTick
         moduleConfig['lastRunTime'] = self.__lastRunTime.isoformat()
@@ -131,7 +128,7 @@ class Module():
 
         self.SIMBA.getConfiguration().writeJsonFile(self.config, moduleConfig)
         
-        success = self._end(self.__lastRunTick, self.__lastRunTime, endTick, endTime)
+        success = self._end(currentDirectory, self.__lastRunTick, self.__lastRunTime, endTick, endTime)
         
         if success:
             success &= self.readStatus()
@@ -142,7 +139,7 @@ class Module():
         return success 
 
     @abstractmethod   
-    def _end(self, lastRunTick, lastRunTime, endTick, endTime):
+    def _end(self, currentDirectory, lastRunTick, lastRunTime, endTick, endTime):
         return False
 
     def readStatus(self):

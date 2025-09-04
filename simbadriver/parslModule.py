@@ -230,27 +230,24 @@ class ParslModule(Module):
         executor.shutdown()
         parsl.clear()
     
-    def _start(self, startTick, startTime):
-        mode = 'start'
-        stdout = str(Path.cwd().joinpath(mode, 'stdout_{}'.format(self.index)))
-        stderr = str(Path.cwd().joinpath(mode, 'stderr_{}'.format(self.index)))
+    def _start(self, currentDirectory, startTick, startTime):
+        stdout = str(currentDirectory.joinpath('stdout_{}'.format(self.index)))
+        stderr = str(currentDirectory.joinpath('stderr_{}'.format(self.index)))
                    
         self.execute(stdout, stderr)
         return True
 
         
-    def _step(self, lastRunTick, lastRunTime, currentTick, currentTime, targetTick, targetTime):
-        mode = self.SIMBA.formatTick(currentTick)
-        stdout = str(Path.cwd().joinpath(mode, 'stdout_{}'.format(self.index)))
-        stderr = str(Path.cwd().joinpath(mode, 'stderr_{}'.format(self.index)))
+    def _step(self, currentDirectory, lastRunTick, lastRunTime, currentTick, currentTime, targetTick, targetTime):
+        stdout = str(currentDirectory.joinpath('stdout_{}'.format(self.index)))
+        stderr = str(currentDirectory.joinpath('stderr_{}'.format(self.index)))
                    
         self.execute(stdout, stderr)
         return True
         
-    def _end(self, lastRunTick, lastRunTime, endTick, endTime):
-        mode = 'end'
-        stdout = str(Path.cwd().joinpath(mode, 'stdout_{}'.format(self.index)))
-        stderr = str(Path.cwd().joinpath(mode, 'stderr_{}'.format(self.index)))
+    def _end(self, currentDirectory, lastRunTick, lastRunTime, endTick, endTime):
+        stdout = str(currentDirectory.joinpath('stdout_{}'.format(self.index)))
+        stderr = str(currentDirectory.joinpath('stderr_{}'.format(self.index)))
                    
         self.execute(stdout, stderr)
         return True

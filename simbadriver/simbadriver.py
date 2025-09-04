@@ -31,18 +31,35 @@ class SIMBA:
         self.schema = self.Configuration.loadJsonFile(self.InstallDir.joinpath("schema", "driver.json"))
         self.data = self.Configuration.loadJsonFile("driver.json", self.schema)
 
+        if "outputDirectory" in self.data:
+            self.data["outputDirectory"] = Path(self.data["outputDirectory"]).resolve()
+        else:
+            self.data["outputDirectory"] = self.pwd
+
+        if not "runId" in self.data:
+            self.data["runId"] = datetime.now().strftime("%Y%m%d%H%M%S.") + str(os.getpid())
+
+        if self.data["runId"]:
+            self.data['outputDirectory'] = self.data['outputDirectory'].joinpath(self.data["runId"])
+
+        if not "cellId" in self.data:
+            self.data["cellId"] = ""
+            
+        if self.data["cellId"]:
+            self.data['outputDirectory'] = self.data['outputDirectory'].joinpath(self.data["cellId"])
+
+        if not self.data["outputDirectory"].exists():
+            try:
+                os.makedirs(self.data["outputDirectory"])
+            except:
+                sys.exit("ERROR: Cannot create output directory '" + str(self.data["outputDirectory"]) + "'.")
+            
         self.data['initialTime'] = datetime.fromisoformat(self.data['initialTime'])        
         self.data['endTime'] = datetime.fromisoformat(self.data['endTime'])        
 
         if self.data["endTime"] < self.data['initialTime']:
             sys.exit("ERROR: SIMBA invalid endTime: '" + str(self.data["endTime"]) + "'.")
 
-        if not "runId" in self.data:
-            self.data["runId"] = datetime.now().strftime("%Y%m%d%H%M%S.") + str(os.getpid())
-
-        if not "cellId" in self.data:
-            self.data["cellId"] = 0
-            
         if not "initialTick" in self.data:
             self.data["initialTick"] = 0
             
@@ -52,7 +69,6 @@ class SIMBA:
         if self.data["continueFromTick"] < self.data["initialTick"]:
             sys.exit("ERROR: SIMBA invalid continueFromTick: '" + str(self.data["continueFromTick"]) + "'.")
 
-        
         currentTime = self.data["initialTime"]
         currentTick = -1
         ToBeRemoved = list()
@@ -135,6 +151,9 @@ class SIMBA:
     def getDatabase(self):
         return self.Database
     
+    def getOutputDirectory(self):
+        return self.data["outputDirectory"]
+        
     def getRunId(self):
         return self.data["runId"]
     

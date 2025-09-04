@@ -59,6 +59,7 @@ class Scheduler:
         self.currentTick = None
         self.currentTime = None
 
+        self.outputDirectory = SIMBA.getOutputDirectory()
         return
             
         
@@ -68,11 +69,13 @@ class Scheduler:
         
         success = True
         
-        if not os.path.exists('start'):
-            os.mkdir('start')
+        currentDirectory = self.outputDirectory.joinpath('start')
+        
+        if not currentDirectory.exists():
+            os.mkdir(currentDirectory)
         
         for item in self.data['schedule']:
-            success &= item["instance"].start(startTick, startTime)
+            success &= item["instance"].start(currentDirectory, startTick, startTime)
             
             if not success:
                 break
@@ -93,16 +96,18 @@ class Scheduler:
         startTick = self.currentTick
         
         while self.currentTick < endTick:
-            if not os.path.exists(self.SIMBA.formatTick(self.currentTick)):
-                os.mkdir(self.SIMBA.formatTick(self.currentTick))
+            currentDirectory = self.outputDirectory.joinpath(self.SIMBA.formatTick(self.currentTick))
+            
+            if not currentDirectory.exists():
+                os.mkdir(currentDirectory)
         
-            success &= self.__internalStep(deltaTime, self.currentTick < continueFromTick)
+            success &= self.__internalStep(currentDirectory, deltaTime, self.currentTick < continueFromTick)
             self.currentTick += 1
             self.currentTime = startTime + (self.currentTick - startTick) * deltaTime
 
         return success
     
-    def __internalStep(self, deltaTime, skipExecution):
+    def __internalStep(self, currentDirectory, deltaTime, skipExecution):
         success = True
         toBeRemoved = list()
         
@@ -112,7 +117,7 @@ class Scheduler:
             
             moduleData = item["moduleData"]
             
-            success &= moduleData["instance"].step(self.currentTick, self.currentTime, 1, deltaTime, skipExecution)
+            success &= moduleData["instance"].step(currentDirectory, self.currentTick, self.currentTime, 1, deltaTime, skipExecution)
             
             if not success:
                 sys.exit("ERROR: Module '" + item["name"] + "' failed to at tick: " + str(self.currentTick) + ".")
@@ -134,12 +139,14 @@ class Scheduler:
     def end(self):
         success = True
         
-        if not os.path.exists('end'):
-            os.mkdir('end')
+        currentDirectory = self.outputDirectory.joinpath('end')
+        
+        if not currentDirectory.exists():
+            os.mkdir(currentDirectory)
         
         for item in self.data['schedule']:
             try:
-                success &= item["instance"].end(self.currentTick, self.currentTime)
+                success &= item["instance"].end(currentDirectory, self.currentTick, self.currentTime)
                 
             except:
                 success = False
@@ -187,7 +194,8 @@ class Scheduler:
 
     def initConfigData(self):
         config = {
-            '$schema': 'https://raw.githubusercontent.com/NSSAC/SIMBA_driver/master/schema/module.json'
+            '$schema': 'https://raw.githubusercontent.com/NSSAC/SIMBA_driver/master/schema/module.json',
+            'outputDirectory': str(self.outputDirectory)
             }
         
         if self.commonData != None:
