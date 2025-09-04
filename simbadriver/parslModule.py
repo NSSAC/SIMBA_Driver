@@ -15,7 +15,6 @@ from pathlib import Path
 from parsl.config import Config
 from parsl.launchers import SingleNodeLauncher
 from parsl.launchers import SrunLauncher
-from parsl.channels import LocalChannel
 from parsl.providers import SlurmProvider
 from parsl.providers import LocalProvider
 from parsl.executors import HighThroughputExecutor
@@ -63,14 +62,12 @@ class ParslModule(Module):
                 
         self.provider = LocalProvider
         self.providerData = {
-            'channel': LocalChannel(),
             'nodes_per_block': 1,
             'init_blocks': 1 ,
             'min_blocks': 0,
             'max_blocks': 1,
             'parallelism': 1.0,
-            'worker_init': '',
-            'move_files': True
+            'worker_init': ''
             }
 
         if 'provider' in data:
@@ -81,7 +78,6 @@ class ParslModule(Module):
                     'account': None,
                     'qos': None,
                     'constraint': None,
-                    'channel': LocalChannel(),
                     'nodes_per_block': 1,
                     'cores_per_node': None,
                     'mem_per_node': None,
@@ -105,8 +101,6 @@ class ParslModule(Module):
                     self.providerData['qos'] = data['provider']['qos']
                 if 'constraint' in data['provider']:
                     self.providerData['constraint'] = data['provider']['constraint']
-                if 'channel' in data['provider']:
-                    self.providerData['channel'] = data['provider']['channel']
                 if 'nodes_per_block' in data['provider']:
                     self.providerData['nodes_per_block'] = data['provider']['nodes_per_block']
                 if 'cores_per_node' in data['provider']:
@@ -135,8 +129,6 @@ class ParslModule(Module):
                     self.providerData['move_files'] = data['provider']['move_files']
             else:
                 if data['provider']['type'] == 'LocalProvider':
-                    if 'channel' in data['provider']:
-                        self.providerData['channel'] = data['provider']['channel']
                     if 'nodes_per_block' in data['provider']:
                         self.providerData['nodes_per_block'] = data['provider']['nodes_per_block']
                     if 'init_blocks' in data['provider']:
@@ -149,8 +141,6 @@ class ParslModule(Module):
                         self.providerData['parallelism'] = data['provider']['parallelism']
                     if 'worker_init' in data['provider']:
                         self.providerData['worker_init'] = data['provider']['worker_init']
-                    if 'move_files' in data['provider']:
-                        self.providerData['move_files'] = data['provider']['move_files']
                 else:
                     raise Exception('Unsupported provider: ' + data['provider']['type'])
                         
@@ -159,7 +149,7 @@ class ParslModule(Module):
             'label': 'HighThroughputExecutor',
             'launch_cmd': None,
             'address': None,
-            'worker_ports': None,
+            'worker_port': None,
             'worker_port_range': (54000, 55000),
             'interchange_port_range': (55000, 56000),
             'storage_access': None,
@@ -167,7 +157,6 @@ class ParslModule(Module):
             'worker_debug': False,
             'cores_per_worker': 1.0,
             'mem_per_worker': None,
-            'max_workers': float('inf'),
             'cpu_affinity': 'none',
             'available_accelerators': [],
             'prefetch_capacity': 0,
@@ -188,8 +177,8 @@ class ParslModule(Module):
                 self.executorData['launch_cmd'] = data['executor']['launch_cmd']
             if 'address' in data['executor']:
                 self.executorData['address'] = data['executor']['address']
-            if 'worker_ports' in data['executor']:
-                self.executorData['worker_ports'] = data['executor']['worker_ports']
+            if 'worker_port' in data['executor']:
+                self.executorData['worker_port'] = data['executor']['worker_port']
             if 'worker_port_range' in data['executor']:
                 self.executorData['worker_port_range'] = (data['executor']['worker_port_range'][0], data['executor']['worker_port_range'][1])
             if 'interchange_port_range' in data['executor']:
@@ -204,8 +193,6 @@ class ParslModule(Module):
                 self.executorData['cores_per_worker'] = data['executor']['cores_per_worker']
             if 'mem_per_worker' in data['executor']:
                 self.executorData['mem_per_worker'] = data['executor']['mem_per_worker']
-            if 'max_workers' in data['executor']:
-                self.executorData['max_workers'] = data['executor']['max_workers']
             if 'cpu_affinity' in data['executor']:
                 self.executorData['cpu_affinity'] = data['executor']['cpu_affinity']
             if 'available_accelerators' in data['executor']:

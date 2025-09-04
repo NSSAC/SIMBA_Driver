@@ -38,7 +38,6 @@ class SIMBA:
             sys.exit("ERROR: SIMBA invalid endTime: '" + str(self.data["endTime"]) + "'.")
 
         if not "runId" in self.data:
-            #TODO CRITICAL Implement me
             self.data["runId"] = datetime.now().strftime("%Y%m%d%H%M%S.") + str(os.getpid())
 
         if not "cellId" in self.data:

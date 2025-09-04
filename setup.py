@@ -32,6 +32,7 @@ setuptools.setup(name='simbaDriver',
     install_requires=[
         'jsonschema',
         'parsl',
+        'htcondor'
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

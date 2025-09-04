@@ -32,9 +32,9 @@ import re
 class rfc3339Duration:
     @staticmethod
     def toTimeDelta(duration):
-        p_time = 'T(?P<time>(?P<hours>[\d]+)H((?P<h_minutes>[\d]+)M((?P<h_seconds>[\d]+)S)?)?|(?P<minutes>[\d]+)M((?P<m_seconds>[\d]+)S)?|(?P<seconds>[\d]+)S)'
-        p_week = '(?P<weeks>[\d]+)W'
-        p_date = '(?P<date>(?P<years>[\d]+)Y((?P<y_months>[\d]+)M((?P<y_days>[\d]+)D)?)?|(?P<months>[\d]+)M((?P<m_days>[\d]+)D)?|(?P<days>[\d]+)D)'
+        p_time = r'T(?P<time>(?P<hours>[\d]+)H((?P<h_minutes>[\d]+)M((?P<h_seconds>[\d]+)S)?)?|(?P<minutes>[\d]+)M((?P<m_seconds>[\d]+)S)?|(?P<seconds>[\d]+)S)'
+        p_week = r'(?P<weeks>[\d]+)W'
+        p_date = r'(?P<date>(?P<years>[\d]+)Y((?P<y_months>[\d]+)M((?P<y_days>[\d]+)D)?)?|(?P<months>[\d]+)M((?P<m_days>[\d]+)D)?|(?P<days>[\d]+)D)'
 
         regexp = re.compile('\A(?P<minus>-)?P(' + p_week + '|(' + p_date+ ')?(' + p_time + ')?)\Z')
 

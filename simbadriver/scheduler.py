@@ -17,6 +17,7 @@ import numbers
 from pathlib import Path
 from functools import cmp_to_key
 from simbadriver.parslModule import ParslModule
+from simbadriver.localModule import LocalModule
 from numpy import log10
 from math import ceil
 
@@ -113,6 +114,9 @@ class Scheduler:
             
             success &= moduleData["instance"].step(self.currentTick, self.currentTime, 1, deltaTime, skipExecution)
             
+            if not success:
+                sys.exit("ERROR: Module '" + item["name"] + "' failed to at tick: " + str(self.currentTick) + ".")
+                
             """ Reschedule the item if required otherwise prepare for removal """
             if self.currentTick + moduleData["tickIncrement"] <= moduleData["endTick"] and moduleData["tickIncrement"] > 0:
                 item["tick"] += moduleData["tickIncrement"]
@@ -153,11 +157,14 @@ class Scheduler:
         return success
 
     def __addModule(self, module):
-        if not module['type'] in [ 'parsl' ]:
+        if not module['type'] in [ 'parsl', 'local' ]:
             sys.exit("ERROR: Module '" + module["type"] + "' is not supported.")
 
-        module['instance'] = ParslModule(self.SIMBA, self, module)
-
+        if module['type'] == 'parsl':
+            module['instance'] = ParslModule(self.SIMBA, self, module)
+        elif module['type'] == 'local':
+            module['instance'] = LocalModule(self.SIMBA, self, module)
+                                
         if not isinstance(module["priority"], numbers.Real):
             if module["priority"] == "-Infinity":
                 module["priority"] = -float("inf")

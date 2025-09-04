@@ -465,14 +465,6 @@
         }
       ]
     },
-    "channel": {
-      "$id": "channel",
-      "title": "Channel",
-      "$$target": [
-        "#/definitions/channel"
-      ],
-      "type": "object"
-    },
     "storageAccess": {
       "$id": "storageAccess",
       "title": "Storage Access",
@@ -572,9 +564,29 @@
           "oneOf": [
             {
               "$ref": "#/definitions/parslModule"
+            },
+            {
+              "$ref": "#/definitions/localModule"
             }
           ]
         }
+      ]
+    },
+    "localModule": {
+      "$id": "localModule",
+      "title": "Local Module",
+      "$$target": [
+        "#/definitions/localModule"
+      ],
+      "description": "This describes module details required to execute a module locally (without parsl)",
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "local"
+        }
+      },
+      "required": [
+        "type"
       ]
     },
     "parslModule": {
