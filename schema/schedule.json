@@ -253,10 +253,6 @@
           "type": "string",
           "description": "Slurm job constraint, often used to choose cpu or gpu type. If unspecified or None, no constraint slurm directive will be added."
         },
-        "channel": {
-          "$ref": "#/definitions/channel",
-          "description": "Channel for accessing this provider. Possible channels include LocalChannel (the default), SSHChannel, or SSHInteractiveLoginChannel."
-        },
         "nodes_per_block": {
           "$ref": "#/definitions/integer",
           "description": "Nodes to provision per block."
@@ -336,10 +332,6 @@
         "type": {
           "description": "Slurm Provider: https://parsl.readthedocs.io/en/stable/stubs/parsl.providers.SlurmProvider.html#parsl.providers.LocalProvider",
           "const": "LocalProvider"
-        },
-        "channel": {
-          "$ref": "#/definitions/channel",
-          "description": "Channel for accessing this provider. Possible channels include LocalChannel (the default), SSHChannel, or SSHInteractiveLoginChannel."
         },
         "nodes_per_block": {
           "$ref": "#/definitions/integer",
@@ -609,9 +601,6 @@
         },
         "launcher": {
           "$ref": "#/definitions/launcher"
-        },
-        "channel": {
-          "$ref": "#/definitions/channel"
         },
         "storageAccess": {
           "$ref": "#/definitions/storageAccess"
