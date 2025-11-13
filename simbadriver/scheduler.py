@@ -81,7 +81,7 @@ class Scheduler:
                 break
             
         if not success:
-            sys.exit("ERROR: Module '" + item["name"] + "' failed to start.")
+            sys.exit("ERROR: Module '" + item["name"] + "' failed to start.") # pyright: ignore[reportPossiblyUnboundVariable]
             
         for item in self.data['schedule']:
             self.schedule.append({"tick" : max(startTick, item["startTick"]), "priority" : item["priority"], "moduleData" : item})
@@ -102,7 +102,7 @@ class Scheduler:
                 os.mkdir(currentDirectory)
         
             success &= self.__internalStep(currentDirectory, deltaTime, self.currentTick < continueFromTick)
-            self.currentTick += 1
+            self.currentTick += 1 # type: ignore
             self.currentTime = startTime + (self.currentTick - startTick) * deltaTime
 
         return success
@@ -155,7 +155,7 @@ class Scheduler:
                 break
         
         if not success:
-            sys.exit("ERROR: Module '" + item["name"] + "' failed to end.")
+            sys.exit("ERROR: Module '" + item["name"] + "' failed to end.") # pyright: ignore[reportPossiblyUnboundVariable]
             
         self.schedule = list()
         self.currentTick = None

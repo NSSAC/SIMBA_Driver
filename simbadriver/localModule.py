@@ -17,7 +17,7 @@ from simbadriver.module import Module
 
 class LocalModule(Module):
     def _init(self, data):
-        return
+        return True
 
     def execute(self, stdout, stderr):
         run(args=self.command + ' ' + self.config, shell=True, stdout=open(stdout, 'w'), stderr=open(stderr, 'w'))

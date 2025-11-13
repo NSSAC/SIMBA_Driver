@@ -148,9 +148,6 @@ class SIMBA:
     def getConfiguration(self):
         return self.Configuration
     
-    def getDatabase(self):
-        return self.Database
-    
     def getOutputDirectory(self):
         return self.data["outputDirectory"]
         

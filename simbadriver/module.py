@@ -41,7 +41,7 @@ class Module():
         self._init(data)
         
     @abstractmethod   
-    def _init(self, data):
+    def _init(self, data) -> bool:
         return False
     
     def start(self, currentDirectory, startTick, startTime):
@@ -70,7 +70,7 @@ class Module():
         return success
         
     @abstractmethod   
-    def _start(self, currentDirectory, startTick, startTime):
+    def _start(self, currentDirectory, startTick, startTime) -> bool:
         return False
         
     def step(self, currentDirectory, currentTick, currentTime, deltaTick, deltaTime, skipExecution):
@@ -83,7 +83,7 @@ class Module():
         moduleConfig['mode'] = 'step'
         moduleConfig['statusFile'] = self.status
         moduleConfig['lastRunTick'] = self.__lastRunTick
-        moduleConfig['lastRunTime'] = self.__lastRunTime.isoformat()
+        moduleConfig['lastRunTime'] = self.__lastRunTime.isoformat() # type: ignore
         moduleConfig['currentTick'] = currentTick
         moduleConfig['currentTime'] = currentTime.isoformat()
         moduleConfig['targetTick'] = currentTick + deltaTick
@@ -107,7 +107,7 @@ class Module():
         return success 
 
     @abstractmethod   
-    def _step(self, currentDirectory, lastRunTick, lastRunTime, currentTick, currentTime, targetTick, targetTime):
+    def _step(self, currentDirectory, lastRunTick, lastRunTime, currentTick, currentTime, targetTick, targetTime) -> bool:
         return False
         
     def end(self, currentDirectory, endTick, endTime):
@@ -118,7 +118,7 @@ class Module():
         moduleConfig['mode'] = 'end'
         moduleConfig['statusFile'] = self.status
         moduleConfig['lastRunTick'] = self.__lastRunTick
-        moduleConfig['lastRunTime'] = self.__lastRunTime.isoformat()
+        moduleConfig['lastRunTime'] = self.__lastRunTime.isoformat() # type: ignore
         moduleConfig['currentTick'] = endTick
         moduleConfig['currentTime'] = endTime.isoformat()
         moduleConfig['tickFormat'] = self.SIMBA.tick
@@ -139,7 +139,7 @@ class Module():
         return success 
 
     @abstractmethod   
-    def _end(self, currentDirectory, lastRunTick, lastRunTime, endTick, endTime):
+    def _end(self, currentDirectory, lastRunTick, lastRunTime, endTick, endTime) -> bool:
         return False
 
     def readStatus(self):

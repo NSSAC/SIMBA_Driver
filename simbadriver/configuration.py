@@ -26,7 +26,7 @@ class Configuration:
             jsonFile = open(Path(self.configurationDirectory).joinpath(fileName),"r")
         
         except:
-            sys.exit("ERROR: File '" + Path(self.configurationDirectory).joinpath(fileName) + "' does not exist.")
+            sys.exit("ERROR: File '" + Path(self.configurationDirectory).joinpath(fileName) + "' does not exist.")  # type: ignore
         
         dictionary = json.load(jsonFile)
         

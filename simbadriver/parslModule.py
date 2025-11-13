@@ -210,7 +210,7 @@ class ParslModule(Module):
             if 'worker_logdir_root' in data['executor']:
                 self.executorData['worker_logdir_root'] = data['executor']['worker_logdir_root']
 
-        return
+        return True
 
     def execute(self, stdout, stderr):
         executor = self.executor(
@@ -218,7 +218,7 @@ class ParslModule(Module):
             provider =  self.provider(
                 **self.providerData, 
                 launcher = self.launcher(
-                    **self.launcherData
+                    **self.launcherData # pyright: ignore[reportArgumentType]
                     )
                 )
             )
