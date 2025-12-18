@@ -179,10 +179,10 @@ class Scheduler:
                 module["priority"] = float("inf")
 
         if not "startTick" in module:
-            module ["startTick"] = -float("inf")
+            module["startTick"] = -float("inf")
 
         if not "tickIncrement" in module:
-            module ["tickIncrement"] = 1
+            module["tickIncrement"] = 1
             
         if not "endTick" in module:
             module["endTick"] = float("inf")

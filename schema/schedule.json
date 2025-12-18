@@ -17,8 +17,8 @@
         "#/definitions/integer"
       ],
       "description": "An integer",
-      "type": "number",
-      "multipleof": 1
+      "type": "integer",
+      "minimum": 0
     },
     "integerTuple": {
       "$id": "integerTuple",
