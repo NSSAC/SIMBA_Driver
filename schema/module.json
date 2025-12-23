@@ -85,7 +85,18 @@
     "commonData": {
       "title": "Common Data",
       "description": "Common data provided to all modules upon execution.",
-      "type": "object"
+      "type": "object",
+      "storeFronts": {
+        "title": "Store Fronts",
+        "description": "A list of all available store fronts providing the necessary information to access the data.",
+        "type": "object",
+        "patternProperties": {
+          "*": {
+            "$ref": "https://raw.githubusercontent.com/NSSAC/SIMBA_Driver/refs/heads/master/schema/module.json",
+            "description": "Module information of the last call to the store front with the name = property."
+          }
+        }
+      }
     },
     "moduleData": {
       "title": "Module specific Data",
