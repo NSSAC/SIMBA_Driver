@@ -27,7 +27,7 @@ class Scheduler:
         if A["tick"] != B["tick"]:
             return A["tick"] - B["tick"]
         
-        delta = B["priority"] - A["priority"]
+        delta = A["priority"] - B["priority"]
         
         return -1 if delta < 0 else 1 if delta > 0 else 0
     
@@ -69,25 +69,40 @@ class Scheduler:
         
         success = True
         
-        currentDirectory = self.outputDirectory.joinpath('start')
+        symlink = self.outputDirectory.joinpath('start')
+        
+        if symlink.exists():
+            os.remove(symlink)
+
+        currentDirectory = self.outputDirectory.joinpath(self.SIMBA.formatTick(self.currentTick))
         
         if not currentDirectory.exists():
             os.mkdir(currentDirectory)
         
+        os.symlink(currentDirectory, symlink)
+
+        # We have to use the schedule for start too as the order of execution is not necessarily the order of definition.
         for item in self.data['schedule']:
-            success &= item["instance"].start(currentDirectory, startTick, startTime)
+            self.schedule.append({"tick" : startTick, "priority" : item["priority"], "moduleData" : item})
+
+        self.schedule.sort(key=cmp_to_key(Scheduler.compare))
+
+        for item in self.schedule:
+            success &= item["moduleData"]["instance"].start(currentDirectory, startTick, startTime)
             
             if not success:
                 break
             
         if not success:
-            sys.exit("ERROR: Module '" + item["name"] + "' failed to start.") # pyright: ignore[reportPossiblyUnboundVariable]
+            sys.exit("ERROR: Module '" + item["moduleData"]["name"] + "' failed to start.") # pyright: ignore[reportPossiblyUnboundVariable]
+        
+        self.schedule = list()
             
         for item in self.data['schedule']:
             self.schedule.append({"tick" : max(startTick, item["startTick"]), "priority" : item["priority"], "moduleData" : item})
 
         self.schedule.sort(key=cmp_to_key(Scheduler.compare))
-         
+
         return success
         
     def step(self, continueFromTick, endTick, deltaTime):
@@ -96,7 +111,7 @@ class Scheduler:
         startTick = self.currentTick
         
         while self.currentTick < endTick:
-            currentDirectory = self.outputDirectory.joinpath(self.SIMBA.formatTick(self.currentTick))
+            currentDirectory = self.outputDirectory.joinpath(self.SIMBA.formatTick(self.currentTick + 1))
             
             if not currentDirectory.exists():
                 os.mkdir(currentDirectory)
@@ -144,10 +159,18 @@ class Scheduler:
         if not currentDirectory.exists():
             os.mkdir(currentDirectory)
         
+        self.schedule = list()
+        
+        # We have to use the schedule for end too as the order of execution is not necessarily the order of definition.
         for item in self.data['schedule']:
+            self.schedule.append({"tick" : self.currentTick, "priority" : item["priority"], "moduleData" : item})
+
+        self.schedule.sort(key=cmp_to_key(Scheduler.compare))
+
+        for item in self.schedule:
             try:
-                success &= item["instance"].end(currentDirectory, self.currentTick, self.currentTime)
-                
+                success &= item["moduleData"]["instance"].end(currentDirectory, self.currentTick, self.currentTime)
+            
             except:
                 success = False
                 

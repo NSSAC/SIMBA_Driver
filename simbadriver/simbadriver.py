@@ -110,7 +110,7 @@ class SIMBA:
                 maxTime = datetime.fromisoformat("9999-01-01T00:00:00Z")
 
             if maxTime > self.data["endTime"]:
-                item["endTick"] = item["startTick"] + math.ceil((self.data["endTime"] - currentTime) / item["tickDuration"]) - 1
+                item["endTick"] = item["startTick"] + math.ceil((self.data["endTime"] - currentTime) / item["tickDuration"])
                 maxTime = currentTime + (item["endTick"] - item["startTick"] + correction) * item["tickDuration"]
                 
             currentTime = maxTime
