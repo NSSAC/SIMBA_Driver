@@ -26,7 +26,6 @@ class SimbaModule(ABC):
             self.configuration = Path.cwd().joinpath(self.configuration).absolute()
 
         self.load()
-        self.init()
 
     def load(self):
         try:
@@ -128,6 +127,7 @@ class SimbaModule(ABC):
         )
 
     def execute(self) -> bool:
+        self.init()
         success = False
         if self.mode == "start":
             success = self.start()
@@ -158,7 +158,7 @@ class SimbaModule(ABC):
         return success
 
     @abstractmethod
-    def init(self) -> bool:
+    def init(self):
         pass
 
     @abstractmethod
