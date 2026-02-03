@@ -19,3 +19,5 @@ simbaDriver.egg-info/
 dist/
 
 build/
+
+examples/modules/status_1.json

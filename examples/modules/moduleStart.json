@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/NSSAC/SIMBA_driver/master/schema/module.json",
+  "commonData": {
+    "dbHost": "128.164.3.12"
+  },
+  "mode": "start",
+  "outputDirectory": "./run",
+  "statusFile": "./status_1.json",
+  "currentTick": 0,
+  "currentTime": "2024-01-01T00:00:00+00:00",
+  "tickFormat": "{:03d}"
+}

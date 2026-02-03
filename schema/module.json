@@ -40,15 +40,15 @@
       "description": "The file in which the return status, updated common, and module data is expected.",
       "type": "string"
     },
-    "lastExecutedTick": {
-      "title": "Last Executed Tick",
-      "description": " The last executed tick (not provided for mode: start).",
+    "lastRunTick": {
+      "title": "Last Run Tick",
+      "description": " The last run tick (not provided for mode: start).",
       "type": "number",
       "multipleOf": 1
     },
-    "lastExecutedTime": {
-      "title": "Last Executed Date Time",
-      "description": " The last executed date time in ISO format (not provided for mode: start).",
+    "lastRunTime": {
+      "title": "Last Run Date Time",
+      "description": " The last run date time in ISO format (not provided for mode: start).",
       "type": "string",
       "format": "date-time"
     },
