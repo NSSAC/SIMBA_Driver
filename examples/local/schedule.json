@@ -11,7 +11,7 @@
       "moduleData": {
         "mode": "preStep"
       },
-      "type": "parsl"
+      "type": "local"
     },
     {
       "name": "SlurmModule2",
@@ -19,7 +19,7 @@
       "priority": 10,
       "startTick": 0,
       "tickIncrement": 2,
-      "type": "parsl"
+      "type": "local"
     }
   ],
   "commonData": {
